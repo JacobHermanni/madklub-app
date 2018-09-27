@@ -14,7 +14,7 @@ export function initConfig(callback) {
         API = { key: process.env.REACT_APP_KEY };
         if (callback) { callback(); }
     }
-    else { console.log("no env var found at all!?"); }
+    else { console.log("!!!IMPORTANT!!! No env var found"); }
 }
 
 export function secretprint() {

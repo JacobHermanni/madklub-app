@@ -1,5 +1,6 @@
 import { config, API } from './printsecret';
-
+const testSheet = { sheetId: '166fSi7fmm7yeYSMVjvCrMp1DIoZLxn3vIKjQO9EjKCE', sheet: "ark2!"};
+const liveSheet = { sheetId: '1LRPYmJEkluEhmA6Z3eGVuCxri-_jw6amV4pqumSI9rg', sheet: "september!"}; 
 /**
  * Get the user authentication status
  */
@@ -77,8 +78,8 @@ export function load(callback) {
  */
 export function updateCell(column, row, value, successCallback, errorCallback) {
   window.gapi.client.sheets.spreadsheets.values.update({
-    spreadsheetId: '166fSi7fmm7yeYSMVjvCrMp1DIoZLxn3vIKjQO9EjKCE',
-    range: 'ark2!' + column + row,
+    spreadsheetId: testSheet.sheetId,
+    range: testSheet.sheet + column + row,
     valueInputOption: 'USER_ENTERED',
     values: [[value]]
   }).then(successCallback, errorCallback);

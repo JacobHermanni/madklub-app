@@ -3,7 +3,7 @@ import currentWeekNumber from 'current-week-number';
 import { checkAuth, load, updateCell, loadClient } from './spreadsheet';
 import 'react-tippy/dist/tippy.css';
 import { Tooltip } from 'react-tippy';
-import { secretprint, initConfig, config, API } from './printsecret';
+import { secretprint, initConfig } from './printsecret';
 
 
 class App extends Component {
@@ -13,10 +13,6 @@ class App extends Component {
 
     this.state = {
       days: [],
-      random: {},
-      authors: [],
-      author: '',
-      order: 'date',
       authenticated: false,
       uge: currentWeekNumber()
     }
@@ -27,6 +23,7 @@ class App extends Component {
       loadClient(load(this.onLoad.bind(this)));
       checkAuth(true, this.handleAuth.bind(this));
     });
+    initConfig(secretprint);
   }
 
   /**
@@ -66,11 +63,8 @@ class App extends Component {
   render() {
     return (
       <div className="app">
-        {initConfig(secretprint)}
-        {console.log("env", process.env.NODE_ENV)}
         <h1 className="brand">Madklub Quick</h1>
         <button onClick={() => this.insertTest()} className="btn"> test insert</button>
-        <button onClick={() => console.log("from app, printing config stuff: ", config, API)}>print secret</button>
         {this.renderContent()}
       </div>
     );
@@ -79,7 +73,7 @@ class App extends Component {
   renderContent() {
 
     if (this.state.days.length) {
-      console.log("if render 2");
+      console.log("if render 1 (render as intended)");
       return (
         <div className="page">
           <div className="nav-header">
@@ -122,15 +116,13 @@ class App extends Component {
       );
     }
     else if (this.state.error) {
-      console.log("if render 3");
-      console.log(this.state.error);
+      console.log("if render 2 (error)", this.state.error);
       return (
         <div> {this.state.error}</div>
       );
     }
     else {
-      console.log("if render 4");
-      console.log("why is loader running? days lenght:", this.state.days);
+      console.log("if render 3 (loading)");
       return (
         <div className="loader" />
       );
@@ -147,7 +139,7 @@ class App extends Component {
   }
 
   insertTest() {
-    updateCell('A', 2, "test", null, (error) => {
+    updateCell('C', 2, "test", null, (error) => {
       console.log("error while inserting", error);
     })
   }
