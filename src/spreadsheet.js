@@ -1,16 +1,17 @@
 import { config, API } from './printsecret';
-const testSheet = { sheetId: '166fSi7fmm7yeYSMVjvCrMp1DIoZLxn3vIKjQO9EjKCE', sheet: "ark2!"};
-const liveSheet = { sheetId: '1LRPYmJEkluEhmA6Z3eGVuCxri-_jw6amV4pqumSI9rg', sheet: "september!"}; 
+const testSheet = { sheetId: '166fSi7fmm7yeYSMVjvCrMp1DIoZLxn3vIKjQO9EjKCE', sheet: "ark2!" };
+const liveSheet = { sheetId: '1LRPYmJEkluEhmA6Z3eGVuCxri-_jw6amV4pqumSI9rg', sheet: "september!" };
 /**
  * Get the user authentication status
  */
 export function checkAuth(immediate, callback) {
+  // auth2 available, but the silent login flow when immediate = true gets blocked by browser. 
   window.gapi.auth.authorize({
     'client_id': config.clientId,
     'scope': "https://www.googleapis.com/auth/spreadsheets",
     'immediate': immediate
   }, callback);
-}
+}//.then((result) => { console.log(result); callback(result) });
 
 export function loadClient(callback) {
   window.gapi.client.setApiKey(API.key, callback);
@@ -22,8 +23,8 @@ export function loadClient(callback) {
 export function load(callback) {
   window.gapi.client.load('sheets', 'v4', () => {
     window.gapi.client.sheets.spreadsheets.values.get({
-      spreadsheetId: '166fSi7fmm7yeYSMVjvCrMp1DIoZLxn3vIKjQO9EjKCE',
-      range: 'ark2!A4:Z'
+      spreadsheetId: liveSheet.sheetId,
+      range: liveSheet.sheet + 'A4:Z'
     }).then((response) => {
       const data = response.result.values || []
 

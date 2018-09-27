@@ -37,7 +37,7 @@ class App extends Component {
       // following load might have to happen only after udate to sheet
       load(this.onLoad.bind(this));
     } else {
-      console.log("auth failed?");
+      console.log("auth failed?", authResult.error);
       this.setState({
         authenticated: false
       })
@@ -134,8 +134,8 @@ class App extends Component {
    */
   authenticate(e) {
     e.preventDefault();
-    if (this.state.authenticated) this.insertTest(); // add update sheet
-    else checkAuth(false, () => { this.handleAuth.bind(this); this.insertTest(); });
+    if (this.state.authenticated) this.insertTest();// add update sheet
+    else checkAuth(false, (result) => { this.handleAuth(result); this.insertTest() });
   }
 
   insertTest() {

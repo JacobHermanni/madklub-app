@@ -6,7 +6,7 @@ export function initConfig(callback) {
         import('./config').then((Config) => {
             config = { clientId: Config.Config.clientId };
             API = { key: Config.API.key };
-            if (callback) { console.log("callback firing."); callback(); }
+            if (callback) callback(); 
         });
     }
     else if (process.env.NODE_ENV === 'production') {
