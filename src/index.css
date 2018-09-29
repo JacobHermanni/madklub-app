@@ -2,6 +2,10 @@
  * BASE LAYOUT
  */
 
+ html {
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
  body {
   margin: 0;
   padding: 15px;
@@ -52,14 +56,20 @@ body > svg {
 .nav-header {
   display:flex;
   justify-content:space-between;
-  margin: 2em;
+  margin: 0.2em;
 }
 
-.nav-header > span, .nav-header > button {  
+.nav-header > ul> li, .nav-header > button {  
   color: white;
   font-size: 1.2em;
   text-shadow: 0 2px 4px rgba(164, 164, 189, 0.4);
   height: 40px;
+}
+
+.nav-header > ul {
+
+  list-style-type: none;
+  padding: 0;
 }
 
 .btn {
