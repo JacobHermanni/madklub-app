@@ -17,6 +17,9 @@ class App extends Component {
       authenticated: false,
       uge: currentWeekNumber()
     }
+    this.OnNextWeekPressed = this.OnNextWeekPressed.bind(this);
+    this.onPreviousWeekPressed = this.onPreviousWeekPressed.bind(this);
+    this.updateData = this.updateData.bind(this);
   }
 
   componentDidMount() {
@@ -36,7 +39,7 @@ class App extends Component {
         authenticated: true
       }, () => console.log("authenticated.."));
       // following load might have to happen only after udate to sheet
-      load(this.onLoad.bind(this));
+      load(this.onLoad.bind(this), this.state.uge, new Date().getFullYear());
     } else {
       console.log("auth failed?", authResult.error);
       this.setState({
@@ -54,10 +57,11 @@ class App extends Component {
         days: data
       });
     }
-    else {
+    else if(error){
+      console.error(error);
       this.setState({
-        error: error
-      })
+        error: error.message
+      });
     }
   }
 
@@ -65,7 +69,7 @@ class App extends Component {
     return (
       <div className="app">
         <h1 className="brand">Madklub Quick</h1>
-        <button onClick={() => this.insertTest()} className="btn"> test insert</button>
+        <button onClick={() => console.log(this.state.days)} className="btn"> test insert</button>
         {this.renderContent()}
       </div>
     );
@@ -78,9 +82,7 @@ class App extends Component {
       return (
         <div className="page">
           <div className="nav-header">
-            <button className="btn" onClick={() => {
-              this.setState({ uge: this.state.uge - 1 });
-            }}>{"<<"}</button>
+            <button className="btn" onClick={this.onPreviousWeekPressed}><<</button>
 
             <ul>
               <li>Uge {this.state.uge}</li>
@@ -91,9 +93,7 @@ class App extends Component {
                   </li>
                 )}
             </ul>
-            <button className="btn" onClick={() => {
-              this.setState({ uge: this.state.uge + 1 });
-            }}>>></button>
+            <button className="btn" onClick={this.OnNextWeekPressed}>>></button>
           </div>
 
           <div className="days">
@@ -136,6 +136,18 @@ class App extends Component {
     }
   }
 
+  OnNextWeekPressed() {
+    this.setState({ uge: this.state.uge + 1 }, () => {
+      this.updateData();
+    });
+  }
+
+  onPreviousWeekPressed() {
+    this.setState({ uge: this.state.uge - 1 }, () => {
+      this.updateData();
+    })
+  }
+
   /**
    * Request Google authentification
    */
@@ -143,6 +155,11 @@ class App extends Component {
     e.preventDefault();
     if (this.state.authenticated) this.insertTest();// add update sheet
     else checkAuth(false, (result) => { this.handleAuth(result); this.insertTest() });
+  }
+
+  updateData() {
+    if (this.state.authenticated) load(this.onLoad.bind(this), this.state.uge, new Date().getFullYear());
+    else checkAuth(false, (result) => { this.handleAuth(result); load(this.onLoad.bind(this), this.state.uge, new Date().getFullYear()); });
   }
 
   tilmeld(roomNr, participants, dato) {

@@ -1,5 +1,5 @@
 import { config, API } from './printsecret';
-import { getFieldInfoForRoom } from "./GoogleSheet/converter";
+import { getFieldInfoForRoom, getMonthNameFromWeekNr } from "./GoogleSheet/converter";
 const testSheet = { sheetId: '166fSi7fmm7yeYSMVjvCrMp1DIoZLxn3vIKjQO9EjKCE', sheet: "ark2!" };
 const liveSheet = { sheetId: '1LRPYmJEkluEhmA6Z3eGVuCxri-_jw6amV4pqumSI9rg', sheet: "september!" };
 /**
@@ -21,11 +21,11 @@ export function loadClient(callback) {
 /**
  * Load the data from the spreadsheet
  */
-export function load(callback) {
+export function load(callback, weekNr, year) {
   window.gapi.client.load('sheets', 'v4', () => {
     window.gapi.client.sheets.spreadsheets.values.get({
       spreadsheetId: liveSheet.sheetId,
-      range: liveSheet.sheet + 'A4:Z'
+      range: getMonthNameFromWeekNr(weekNr, year) + '!A4:Z'
     }).then((response) => {
       const data = response.result.values || []
 
