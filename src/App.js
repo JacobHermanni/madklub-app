@@ -82,7 +82,7 @@ class App extends Component {
       return (
         <div className="page">
           <div className="nav-header">
-            <button className="btn" onClick={this.onPreviousWeekPressed}><<</button>
+            <button className="btn" onClick={this.onPreviousWeekPressed}>{"<<"}</button>
 
             <ul>
               <li>Uge {this.state.uge}</li>
@@ -93,7 +93,7 @@ class App extends Component {
                   </li>
                 )}
             </ul>
-            <button className="btn" onClick={this.OnNextWeekPressed}>>></button>
+            <button className="btn" onClick={this.OnNextWeekPressed}>{">>"}</button>
           </div>
 
           <div className="days">
