@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import currentWeekNumber from 'current-week-number';
-import { checkAuth, load, updateCell, loadClient } from './spreadsheet';
+import { checkAuth, load, updateCell, loadClient, tilmeld } from './spreadsheet';
 import 'react-tippy/dist/tippy.css';
 import { Tooltip } from 'react-tippy';
 import { secretprint, initConfig } from './printsecret';
@@ -107,9 +107,7 @@ class App extends Component {
                       </span>
                     </Tooltip>
                   )}
-                  {/*day.kok &&
-                  (<button className="btn" onClick={this.authenticate.bind(this)}>Tilmeld</button>)*/}
-                  {day.kok && <TilmeldModal onTilmeld={value => console.log("Tilmeld: " + value)}/>}
+                  {day.kok && <TilmeldModal onTilmeld={(value, participants) => this.tilmeld(value, participants, day.dato)}/>}
                 </div>
               );
             })}
@@ -131,10 +129,6 @@ class App extends Component {
     }
   }
 
-  tilmeld() {
-    console.log(this.state.uge)
-  }
-
   /**
    * Request Google authentification
    */
@@ -144,8 +138,18 @@ class App extends Component {
     else checkAuth(false, (result) => { this.handleAuth(result); this.insertTest() });
   }
 
+  tilmeld(roomNr, participants, dato) {
+    var date = new Date(new Date().getFullYear(), 0, (1 + (this.state.uge - 1) * 7));
+    date.setDate(dato.split('.')[0]);
+    if (this.state.authenticated) tilmeld(roomNr, this.state.uge, date, participants, null, error => console.log("Error tilmelding", error));
+    else checkAuth(false, (result) => { 
+      this.handleAuth(result); 
+      tilmeld(roomNr, this.state.uge, date, participants, null, error => console.log("Error tilmelding", error));
+    });
+  }
+
   insertTest() {
-    updateCell('C', 2, "test", null, (error) => {
+    updateCell('C', 2, "test", () => console.log("Done"), (error) => {
       console.log("error while inserting", error);
     })
   }

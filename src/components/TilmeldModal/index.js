@@ -4,21 +4,27 @@ import Dropdown from 'react-dropdown'
 import 'react-dropdown/style.css'
 import "./tilmeldModal_style.css";
 
-const options = [
+const rooms = [
     "317", "318", "319", "320", "321", "322", "323", "324", "325", "326", "327", "328", "329", "330", "331"
 ];
+
+const participants = [ "0", "1", "2", "3", "4", "5", "6" ];
+
+ReactModal.setAppElement('#root')
 
 export default class TilmeldModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             showModal: false,
-            value: options[0]
+            value: rooms[0],
+            participants: "1",
         };
 
         this.handleOpenModal = this.handleOpenModal.bind(this);
         this.handleCloseModel = this.handleCloseModel.bind(this);
-        this.onSelect = this.onSelect.bind(this);
+        this.onRoomSelect = this.onRoomSelect.bind(this);
+        this.onParticipantSelect = this.onParticipantSelect.bind(this);
         this.onTilmeld = this.onTilmeld.bind(this);
     }
 
@@ -30,12 +36,16 @@ export default class TilmeldModal extends React.Component {
         this.setState({ showModal: false });
     }
 
-    onSelect(e) {
+    onRoomSelect(e) {
         this.setState({ value: e.value });
     }
 
+    onParticipantSelect(e) {
+        this.setState({ participants: e.value });
+    }
+
     onTilmeld() {
-        this.props.onTilmeld(this.state.value);
+        this.props.onTilmeld(this.state.value, this.state.participants);
         this.handleCloseModel();
     }
 
@@ -54,7 +64,10 @@ export default class TilmeldModal extends React.Component {
                         <br />
                         <div className="modal-content">
                             <label><h3>Værelses nummber:</h3>
-                            <Dropdown options={options} onChange={this.onSelect} value={options[0]} className="modal-dropdown"/>
+                                <Dropdown options={rooms} onChange={this.onRoomSelect} value={this.state.value} className="modal-dropdown"/>
+                            </label>
+                            <label><h3>Antal:</h3>
+                                <Dropdown options={participants} onChange={this.onParticipantSelect} value={this.state.participants} className="modal-dropdown"/>
                             </label>
                             <button btn="btn" onClick={this.onTilmeld}>Tilmeld</button>
                         </div>

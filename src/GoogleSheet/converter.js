@@ -28,8 +28,8 @@ function getRowNumberFromDate(weekNr, year, dayNr, monthNr) {
 export function getFieldInfoForRoom(roomNr, weekNr, monthNr, year, dayNr) {
     var sheet = getMonthNameFromWeekNr(weekNr, year);
     var letter = roomLetters[roomNr - 317];
-    var number = getRowNumberFromDate(weekNr, year, dayNr, --monthNr);
-    return { sheet, letter, number };
+    var row = getRowNumberFromDate(weekNr, year, dayNr, --monthNr);
+    return { sheet, letter, row };
 }
 
 function getPreviousMonday(date) {
