@@ -82,9 +82,18 @@ class App extends Component {
       return (
         <div className="page">
           <div className="nav-header">
-            <button className="btn" onClick={this.onPreviousWeekPressed}>Forrige uge</button>
-            <span>Uge {this.state.uge}</span>
-            <button className="btn" onClick={this.OnNextWeekPressed}>Næste uge</button>
+            <button className="btn" onClick={this.onPreviousWeekPressed}><<</button>
+
+            <ul>
+              <li>Uge {this.state.uge}</li>
+              {this.state.days.find(day => Number(day.uge) === Number(this.state.uge)) &&
+                (
+                  <li>Ugens kokke:
+                <br></br> {this.state.days.find(day => Number(day.uge) === Number(this.state.uge)).ugensKokke.toString()}
+                  </li>
+                )}
+            </ul>
+            <button className="btn" onClick={this.OnNextWeekPressed}>>></button>
           </div>
 
           <div className="days">
@@ -110,7 +119,7 @@ class App extends Component {
               );
             })}
           </div>
-        </div>
+        </div >
       );
     }
     else if (this.state.error) {
