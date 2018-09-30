@@ -1,0 +1,47 @@
+.Modal {
+    position: absolute;
+    min-width: 300px;
+    min-height: 200px;
+    top: 40%;
+    left: 40%;
+    right: 40%;
+    bottom: 40%;
+    background-color: papayawhip;
+}
+
+.Modal:-moz-focusring {
+    color: transparent;
+    text-shadow: 0 0 0 #000;
+}
+
+.Overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: transparent;
+}
+
+.modal-rightHeader {
+    float: right;
+}
+
+.modal-closeBottom {
+    margin: 5px;
+    background-color: transparent;
+    color: black;
+    border: none;
+}
+
+.modal-content {
+    margin: 10px;
+    margin-top: -10px;
+}
+
+.modal-content > label > h3 {
+    margin: 0px;
+}
+.modal-content >button {
+    margin-top: 10px;
+}

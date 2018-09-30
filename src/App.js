@@ -4,6 +4,7 @@ import { checkAuth, load, updateCell, loadClient } from './spreadsheet';
 import 'react-tippy/dist/tippy.css';
 import { Tooltip } from 'react-tippy';
 import { secretprint, initConfig } from './printsecret';
+import TilmeldModal from './components/TilmeldModal/';
 
 
 class App extends Component {
@@ -106,8 +107,9 @@ class App extends Component {
                       </span>
                     </Tooltip>
                   )}
-                  {day.kok &&
-                    (<button className="btn" onClick={this.authenticate.bind(this)}>Tilmeld</button>)}
+                  {/*day.kok &&
+                  (<button className="btn" onClick={this.authenticate.bind(this)}>Tilmeld</button>)*/}
+                  {day.kok && <TilmeldModal onTilmeld={value => console.log("Tilmeld: " + value)}/>}
                 </div>
               );
             })}
@@ -127,6 +129,10 @@ class App extends Component {
         <div className="loader" />
       );
     }
+  }
+
+  tilmeld() {
+    console.log(this.state.uge)
   }
 
   /**
