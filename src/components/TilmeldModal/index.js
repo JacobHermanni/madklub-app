@@ -28,6 +28,12 @@ export default class TilmeldModal extends React.Component {
         this.onTilmeld = this.onTilmeld.bind(this);
     }
 
+    componentDidUpdate(prevprops) {
+        if (prevprops.roomNr !== this.props.roomNr) {
+            this.setState({ value: this.props.roomNr });
+        }
+    }
+
     handleOpenModal() {
         this.setState({ showModal: true });
     }
