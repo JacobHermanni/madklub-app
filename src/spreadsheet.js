@@ -96,13 +96,3 @@ export function tilmeld(roomNr, weekNr, date, participants, successCallback, err
     values: [[participants]]
   }).then(successCallback, errorCallback);
 }
-
-export function afmeld(roomNr, weekNr, date, successCallback, errorCallback) {
-  var field = getFieldInfoForRoom(roomNr, weekNr, date.getMonth() + 1, date.getFullYear(), date.getDate());
-  window.gapi.client.sheets.spreadsheets.values.update({
-    spreadsheetId: liveSheet.sheetId,
-    range: `${field.sheet}!${field.letter}${field.row}`,
-    valueInputOption: 'USER_ENTERED',
-    values: [[]]
-  }).then(successCallback, errorCallback);
-}
