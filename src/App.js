@@ -4,7 +4,13 @@ import { checkAuth, load, updateCell, loadClient } from './spreadsheet';
 import 'react-tippy/dist/tippy.css';
 import { Tooltip } from 'react-tippy';
 import { secretprint, initConfig } from './printsecret';
+import Dropdown from 'react-dropdown'
+import 'react-dropdown/style.css'
 
+
+const options = [
+  '317', '318', '319', '320', '321', '322', '323', '324', '325', '326', '327', '328', '329', '330', '331'
+];
 
 class App extends Component {
 
@@ -12,9 +18,10 @@ class App extends Component {
     super(props);
 
     this.state = {
-      days: [],
+      dage: undefined,
       authenticated: false,
-      uge: currentWeekNumber()
+      uge: currentWeekNumber(),
+      værelsesnr: undefined
     }
   }
 
@@ -44,13 +51,10 @@ class App extends Component {
     }
   }
 
-  /**
-   * Once quotes have been loaded from the spreadsheet
-   */
   onLoad(data, error) {
     if (data) {
       this.setState({
-        days: data
+        dage: data
       });
     }
     else {
@@ -64,7 +68,15 @@ class App extends Component {
     return (
       <div className="app">
         <h1 className="brand">Madklub Quick</h1>
-        <button onClick={() => this.insertTest()} className="btn"> test insert</button>
+        <div className="room-number">
+          <Dropdown className="room-dropdown"
+            options={options}
+            value={this.state.værelsesnr || "Vælg dit nr"}
+            onChange={(option) => this.setState({ værelsesnr: option.value })}
+          />
+          {!this.state.authenticated && this.state.dage &&
+            (<button className="btn" onClick={() => checkAuth(false, this.handleAuth.bind(this))}>Log ind</button>)}
+        </div>
         {this.renderContent()}
       </div>
     );
@@ -72,8 +84,7 @@ class App extends Component {
 
   renderContent() {
 
-    if (this.state.days.length) {
-      console.log("if render 1 (render as intended)");
+    if (this.state.dage) {
       return (
         <div className="page">
           <div className="nav-header">
@@ -83,10 +94,10 @@ class App extends Component {
 
             <ul>
               <li>Uge {this.state.uge}</li>
-              {this.state.days.find(day => Number(day.uge) === Number(this.state.uge)) &&
+              {this.state.dage.find(dag => Number(dag.uge) === Number(this.state.uge)) &&
                 (
                   <li>Ugens kokke:
-                <br></br> {this.state.days.find(day => Number(day.uge) === Number(this.state.uge)).ugensKokke.toString()}
+                <br></br> {this.state.dage.find(dag => Number(dag.uge) === Number(this.state.uge)).ugensKokke.toString()}
                   </li>
                 )}
             </ul>
@@ -96,25 +107,24 @@ class App extends Component {
           </div>
 
           <div className="days">
-            {this.state.days.filter(day => Number(day.uge) === this.state.uge).map((day, i) => {
+            {this.state.dage.filter(dag => Number(dag.uge) === this.state.uge).map((dag, i) => {
               return (
-                <div key={i} className={`${day.kok ? "day-list_item" : "day-list_item-ingen-madklub"}`}>
-                  <h2 >{day.ugedag} {day.dato}</h2>
-                  <span className="madklub" title="">{day.kok || "Ingen madklub"}</span>
-                  {day.kok && (
+                <div key={i} className={`${dag.kok ? "day-list_item" : "day-list_item-ingen-madklub"}`}>
+                  <h2 >{dag.ugedag} {dag.dato}</h2>
+                  <span className="madklub" title="">{dag.kok || "Ingen madklub"}</span>
+                  {dag.kok && (
                     <Tooltip
                       className="tilmeldte"
-                      title={day.tilmeldte && day.tilmeldte}
+                      title={dag.tilmeldte && dag.tilmeldte}
                       position="right"
                       trigger="click"
                     >
                       <span>
-                        {` - tilmeldte: ${day.tilmeldte && day.antalTilmeldte}`}
+                        &nbsp;- tilmeldte: <span className="tilmeldte-clickable">{dag.tilmeldte && dag.antalTilmeldte}</span>
                       </span>
                     </Tooltip>
                   )}
-                  {day.kok &&
-                    (<button className="btn" onClick={this.authenticate.bind(this)}>Tilmeld</button>)}
+                  {dag.kok && this.state.værelsesnr && this.renderTilmeld(dag)}
                 </div>
               );
             })}
@@ -123,17 +133,37 @@ class App extends Component {
       );
     }
     else if (this.state.error) {
-      console.log("if render 2 (error)", this.state.error);
+      console.log("(error)", this.state.error);
       return (
         <div> {this.state.error}</div>
       );
     }
     else {
-      console.log("if render 3 (loading)");
+      console.log("(loading)");
       return (
         <div className="loader" />
       );
     }
+  }
+
+
+  renderTilmeld(dag) {
+    if (this.checkTilmelding(this.state.værelsesnr, dag)) {
+      return (<button className="btn" onClick={() => console.log("implementer afmelding her")}>Afmeld</button>)
+    }
+    else
+      return (<button className="btn" onClick={this.authenticate.bind(this)}>Tilmeld</button>)
+  }
+
+
+
+  checkTilmelding(nr, dag) {
+    var isTrue = false;
+    dag.tilmeldte.forEach(værelse => {
+      if (Number(værelse) === Number(nr)) isTrue = true;
+      if (værelse.toString().includes(" ")) if (værelse.toString().split(" ")[0] === nr.toString()) isTrue = true;
+    });
+    return isTrue;
   }
 
   /**

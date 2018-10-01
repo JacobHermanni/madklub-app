@@ -40,6 +40,15 @@ body > svg {
   width: 100%;
 }
 
+.room-number {
+  width: 170px;
+  padding-bottom: 8pt;
+}
+
+.room-number > .Dropdown-menu {
+  max-height: 300px;
+}
+
 .day-list_item {
   margin-bottom: 1rem;
   padding: 1rem;
@@ -51,6 +60,12 @@ body > svg {
   padding: 1rem;
   background: rgba(0,0,0,.3);
   box-shadow: none !important;
+}
+
+.tilmeldte-clickable {
+  color: #4285f4;
+  cursor: pointer;
+  text-decoration-line: underline;
 }
 
 .nav-header {
@@ -130,11 +145,7 @@ h2 {
   font-weight: normal;
 }
 
-hr {
-  margin: 3em 0;
-  border: 0;
-  border-top: 1px solid rgba(0,0,0,.1);
-}
+
 
 .btn {
   display: inline-block;
@@ -160,186 +171,6 @@ hr {
     top: 1px;
   }
 
-.alert {
-  color: #D65F5F;
-}
-  .alert__icon {
-    display: block;
-    margin: 0 auto 20px;
-
-    font-size: 100px;
-    line-height: 1;
-  }
-
-
-/**
- * FORMS
- */
-
-select {
-  display: inline-block;
-  height: 28px;
-  padding-left: 10px;
-  padding-right: 10px;
-
-  background-color: white;
-  border: 1px solid #cecece;
-}
-
-
-/**
- * FILTERS
- */
-
-.filters {
-  padding-left: 0;
-  margin-bottom: 2em;
-  list-style: none;
-}
-  .filters > li {
-    display: inline-block;
-  }
-  .filters > li:not(:last-child) {
-    margin-right: 20px;
-  }
-
-
-/**
- * QUOTES
- */
-
-.quote + .quote {
-  margin-top: 30px;
-}
-
-.quote__body {
-  display: inline-block;
-  min-width: 220px;
-  margin: 0;
-  padding: 15px 30px;
-
-  position: relative;
-  z-index: 2;
-
-  font-family: 'Libre Baskerville', serif;
-  font-size: 18px;
-  color: rgba(0,0,0,.8);
-  font-style: italic;
-
-  border-radius: 10px;
-  box-shadow: 1px 1px 2px rgba(0,0,0,.1) inset;
-}
-
-  .quote:nth-child(1n) .quote__body {
-    background-image: linear-gradient(35deg, #DAEBEE, #B5CFD8);
-  }
-    .quote:nth-child(1n) .quote__body + .quote__meta-wrapper .quote__meta::before {
-      background-color: #CFE2E7;
-    }
-
-  .quote:nth-child(2n) .quote__body {
-    background-image: linear-gradient(35deg, #F0EFE2, #E3E2C3);
-  }
-    .quote:nth-child(2n) .quote__body + .quote__meta-wrapper .quote__meta::before {
-      background-color: #ECEBDA;
-    }
-
-  .quote:nth-child(3n) .quote__body {
-    background-image: linear-gradient(35deg, #fadfdf, #F6CAC9);
-  }
-    .quote:nth-child(3n) .quote__body + .quote__meta-wrapper .quote__meta::before {
-      background-color: #F9DBDB;
-    }
-
-  .quote:nth-child(4n) .quote__body {
-    background-image: linear-gradient(35deg, #dcecd1, #cee4bf);
-  }
-    .quote:nth-child(4n) .quote__body + .quote__meta-wrapper .quote__meta::before {
-      background-color: #D7E9CB;
-    }
-
-.quote__body p {
-  margin: 0;
-}
-  .quote__body p + p {
-    margin-top: 10px;
-    padding-top: 10px;
-
-    border-top: 1px solid rgba(0,0,0,.06);
-  }
-
-.quote__meta {
-  display: inline-block;
-  margin-top: 10px;
-
-  position: relative;
-
-  color: #777;
-  font-size: 0.875rem;
-  font-style: normal;
-}
-
-  @media (min-width: 25em) {
-    .quote__meta::before,
-    .quote__meta::after {
-      content: '';
-      display: block;
-      width: 40px;
-      height: 40px;
-
-      position: absolute;
-      left: -40px;
-      bottom: 50%;
-
-      border-radius: 50%;
-    }
-    .quote__meta::after {
-      margin-left: 20px;
-      margin-bottom: -4px;
-
-      z-index: 1;
-
-      background-color: white;
-    }
-
-    .quote__meta-content {
-      position: relative;
-      z-index: 2;
-    }
-  }
-
-
-.quote__like {
-  margin-left: 15px;
-
-  color: currentColor;
-  text-decoration: none;
-}
-
-  .quote__like.liked {
-    color: #D3504A;
-  }
-
-  .quote__like.liked .heart-icon,
-  .quote__like:hover .heart-icon,
-  .quote__like:focus .heart-icon {
-    fill: currentColor;
-  }
-
-.heart-icon {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  margin-right: 5px;
-
-  position: relative;
-  top: -1px;
-
-  vertical-align: middle;
-
-  fill: none;
-  stroke: currentColor;
-}
 
 
 /**

@@ -6,7 +6,7 @@ export function initConfig(callback) {
         import('./config').then((Config) => {
             config = { clientId: Config.Config.clientId };
             API = { key: Config.API.key };
-            if (callback) callback(); 
+            if (callback) callback();
         });
     }
     else if (process.env.NODE_ENV === 'production') {
@@ -18,5 +18,5 @@ export function initConfig(callback) {
 }
 
 export function secretprint() {
-    console.log("attempting to print secret", config, " api: ", API);
+    console.log("this is callback after init. Replace this with call for receiving user info til room nr");
 }
