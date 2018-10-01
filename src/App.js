@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import currentWeekNumber from 'current-week-number';
-import { checkAuth, load, updateCell, loadClient } from './spreadsheet';
+import { checkAuth, load, updateCell, loadClient, tilmeld } from './spreadsheet';
 import 'react-tippy/dist/tippy.css';
 import { Tooltip } from 'react-tippy';
 import { secretprint, initConfig } from './printsecret';
 import Dropdown from 'react-dropdown'
 import 'react-dropdown/style.css'
+import TilmeldModal from './components/TilmeldModal/';
 
 
 const options = [
@@ -23,6 +24,9 @@ class App extends Component {
       uge: currentWeekNumber(),
       værelsesnr: undefined
     }
+    this.OnNextWeekPressed = this.OnNextWeekPressed.bind(this);
+    this.onPreviousWeekPressed = this.onPreviousWeekPressed.bind(this);
+    this.updateData = this.updateData.bind(this);
   }
 
   componentDidMount() {
@@ -42,7 +46,7 @@ class App extends Component {
         authenticated: true
       }, () => console.log("authenticated.."));
       // following load might have to happen only after udate to sheet
-      load(this.onLoad.bind(this));
+      load(this.onLoad.bind(this), this.state.uge, new Date().getFullYear());
     } else {
       console.log("auth failed?", authResult.error);
       this.setState({
@@ -57,10 +61,11 @@ class App extends Component {
         dage: data
       });
     }
-    else {
+    else if (error) {
+      console.error(error);
       this.setState({
-        error: error
-      })
+        error: error.message
+      });
     }
   }
 
@@ -88,9 +93,7 @@ class App extends Component {
       return (
         <div className="page">
           <div className="nav-header">
-            <button className="btn" onClick={() => {
-              this.setState({ uge: this.state.uge - 1 });
-            }}>{"<<"}</button>
+            <button className="btn" onClick={this.onPreviousWeekPressed}>{"<<"}</button>
 
             <ul>
               <li>Uge {this.state.uge}</li>
@@ -101,9 +104,7 @@ class App extends Component {
                   </li>
                 )}
             </ul>
-            <button className="btn" onClick={() => {
-              this.setState({ uge: this.state.uge + 1 });
-            }}>>></button>
+            <button className="btn" onClick={this.OnNextWeekPressed}>{">>"}</button>
           </div>
 
           <div className="days">
@@ -152,10 +153,8 @@ class App extends Component {
       return (<button className="btn" onClick={() => console.log("implementer afmelding her")}>Afmeld</button>)
     }
     else
-      return (<button className="btn" onClick={this.authenticate.bind(this)}>Tilmeld</button>)
+      return (dag.kok && <TilmeldModal onTilmeld={(value, participants) => this.tilmeld(value, participants, dag.dato)} />)
   }
-
-
 
   checkTilmelding(nr, dag) {
     var isTrue = false;
@@ -164,6 +163,18 @@ class App extends Component {
       if (værelse.toString().includes(" ")) if (værelse.toString().split(" ")[0] === nr.toString()) isTrue = true;
     });
     return isTrue;
+  }
+
+  OnNextWeekPressed() {
+    this.setState({ uge: this.state.uge + 1 }, () => {
+      this.updateData();
+    });
+  }
+
+  onPreviousWeekPressed() {
+    this.setState({ uge: this.state.uge - 1 }, () => {
+      this.updateData();
+    })
   }
 
   /**
@@ -175,8 +186,23 @@ class App extends Component {
     else checkAuth(false, (result) => { this.handleAuth(result); this.insertTest() });
   }
 
+  updateData() {
+    if (this.state.authenticated) load(this.onLoad.bind(this), this.state.uge, new Date().getFullYear());
+    else checkAuth(false, (result) => { this.handleAuth(result); load(this.onLoad.bind(this), this.state.uge, new Date().getFullYear()); });
+  }
+
+  tilmeld(roomNr, participants, dato) {
+    var date = new Date(new Date().getFullYear(), 0, (1 + (this.state.uge - 1) * 7));
+    date.setDate(dato.split('.')[0]);
+    if (this.state.authenticated) tilmeld(roomNr, this.state.uge, date, participants, null, error => console.log("Error tilmelding", error));
+    else checkAuth(false, (result) => {
+      this.handleAuth(result);
+      tilmeld(roomNr, this.state.uge, date, participants, null, error => console.log("Error tilmelding", error));
+    });
+  }
+
   insertTest() {
-    updateCell('C', 2, "test", null, (error) => {
+    updateCell('C', 2, "test", () => console.log("Done"), (error) => {
       console.log("error while inserting", error);
     })
   }

@@ -1,4 +1,5 @@
 import { config, API } from './printsecret';
+import { getFieldInfoForRoom, getMonthNameFromWeekNr } from "./GoogleSheet/converter";
 const testSheet = { sheetId: '166fSi7fmm7yeYSMVjvCrMp1DIoZLxn3vIKjQO9EjKCE', sheet: "ark2!" };
 const liveSheet = { sheetId: '1LRPYmJEkluEhmA6Z3eGVuCxri-_jw6amV4pqumSI9rg', sheet: "september!" };
 /**
@@ -20,11 +21,11 @@ export function loadClient(callback) {
 /**
  * Load the data from the spreadsheet
  */
-export function load(callback) {
+export function load(callback, weekNr, year) {
   window.gapi.client.load('sheets', 'v4', () => {
     window.gapi.client.sheets.spreadsheets.values.get({
       spreadsheetId: liveSheet.sheetId,
-      range: liveSheet.sheet + 'A4:Z'
+      range: getMonthNameFromWeekNr(weekNr, year) + '!A4:Z'
     }).then((response) => {
       const data = response.result.values || []
 
@@ -83,5 +84,15 @@ export function updateCell(column, row, value, successCallback, errorCallback) {
     range: testSheet.sheet + column + row,
     valueInputOption: 'USER_ENTERED',
     values: [[value]]
+  }).then(successCallback, errorCallback);
+}
+
+export function tilmeld(roomNr, weekNr, date, participants, successCallback, errorCallback) {
+  var field = getFieldInfoForRoom(roomNr, weekNr, date.getMonth() + 1, date.getFullYear(), date.getDate());
+  window.gapi.client.sheets.spreadsheets.values.update({
+    spreadsheetId: liveSheet.sheetId,
+    range: `${field.sheet}!${field.letter}${field.row}`,
+    valueInputOption: 'USER_ENTERED',
+    values: [[participants]]
   }).then(successCallback, errorCallback);
 }
