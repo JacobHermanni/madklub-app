@@ -17,7 +17,7 @@ export default class TilmeldModal extends React.Component {
         super(props);
         this.state = {
             showModal: false,
-            value: rooms[0],
+            value: this.props.roomNr || rooms[0],
             participants: "1",
         };
 
