@@ -150,10 +150,10 @@ class App extends Component {
 
   renderTilmeld(dag) {
     if (this.checkTilmelding(this.state.værelsesnr, dag)) {
-      return (<button className="btn" onClick={() => console.log("implementer afmelding her")}>Afmeld</button>)
+      return (<button className="btn" onClick={() => this.tilmeld(this.state.værelsesnr, "", dag.dato)}>Afmeld</button>)
     }
     else
-      return (dag.kok && <TilmeldModal onTilmeld={(value, participants) => this.tilmeld(value, participants, dag.dato)} />)
+      return (dag.kok && <TilmeldModal onTilmeld={(value, participants) => this.tilmeld(value, participants, dag.dato)} roomNr={this.state.værelsesnr} />)
   }
 
   checkTilmelding(nr, dag) {
