@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import currentWeekNumber from 'current-week-number';
-import { checkAuth, load, updateCell, loadClient, tilmeld } from './spreadsheet';
+import { checkAuth, load, updateCell, loadClient, tilmeld, afmeld } from './spreadsheet';
 import 'react-tippy/dist/tippy.css';
 import { Tooltip } from 'react-tippy';
 import { secretprint, initConfig } from './printsecret';
@@ -150,7 +150,7 @@ class App extends Component {
 
   renderTilmeld(dag) {
     if (this.checkTilmelding(this.state.værelsesnr, dag)) {
-      return (<button className="btn" onClick={() => console.log("implementer afmelding her")}>Afmeld</button>)
+      return (<button className="btn" onClick={() => this.tilmeld(this.state.værelsesnr, "", dag.dato)}>Afmeld</button>)
     }
     else
       return (dag.kok && <TilmeldModal onTilmeld={(value, participants) => this.tilmeld(value, participants, dag.dato)} roomNr={this.state.værelsesnr} />)
@@ -198,6 +198,16 @@ class App extends Component {
     else checkAuth(false, (result) => {
       this.handleAuth(result);
       tilmeld(roomNr, this.state.uge, date, participants, null, error => console.log("Error tilmelding", error));
+    });
+  }
+
+  afmeld(roomNr, dato) {
+    var date = new Date(new Date().getFullYear(), 0, (1 + (this.state.uge - 1) * 7));
+    date.setDate(dato.split('.')[0]);
+    if (this.state.authenticated) afmeld(roomNr, this.state.uge, date, null, error => console.log("Error tilmelding", error));
+    else checkAuth(false, result => {
+      this.handleAuth(result);
+      afmeld(roomNr, this.state.uge, date, null, error => console.log("Error tilmelding", error));
     });
   }
 
