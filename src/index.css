@@ -52,6 +52,10 @@ body > svg {
   max-height: 300px;
 }
 
+.room-number > button {
+  margin-top: 1em;
+}
+
 .day-list_item {
   margin-bottom: 1rem;
   padding: 1rem;
@@ -95,7 +99,12 @@ body > svg {
 }
 
 .btn {
-  border-radius:5px;
+  color: white;
+  font-size: inherit;
+  /* background-color: #004262; */
+  display: inline-block;
+  padding: 12px 24px;
+  border-radius: 55px;
   border: none;
   outline: none;
   cursor: pointer;
@@ -143,7 +152,7 @@ body > svg {
     }
   }
 
-h2 {
+.days > div > h2 {
   font-family: 'Roboto Slab';
   font-weight: 700;
   font-size: 14px;
@@ -154,7 +163,7 @@ h2 {
 
 
 
-.btn {
+/* .btn {
   display: inline-block;
   padding: 12px 24px;
 
@@ -176,7 +185,7 @@ h2 {
   .btn:active {
     position: relative;
     top: 1px;
-  }
+  } */
 
 
 

@@ -48,7 +48,8 @@ function loadUsers(users) {
 
 function tryLoadUser(loggedInUser, sheetUsers, callback) {
   const user = sheetUsers.find((user) => user.email === loggedInUser.email);
-  callback(user);
+  if (user) callback(user, true); 
+  else callback(loggedInUser, false);
 }
 
 function decodeJWT(rawToken) {
@@ -83,14 +84,14 @@ export function loadUsersSheet(callback) {
       let users = data.map((user, i) => {
         let row = i + 1, // Save row ID for later update
           værelsesnr = user[0],
-          email = user[1],
-          navn = user[2]
+          navn = user[1],
+          email = user[2]
 
         return {
           row,
           værelsesnr,
-          email,
-          navn
+          navn,
+          email
         }
       });
 
@@ -165,8 +166,8 @@ export function loadMonth(callback, weekNr, year) {
  */
 export function updateCell(column, row, value, successCallback, errorCallback) {
   window.gapi.client.sheets.spreadsheets.values.update({
-    spreadsheetId: "testSheet.sheetId",
-    range: "testSheet.sheet" + column + row,
+    spreadsheetId: userSheet.sheetId,
+    range: userSheet.sheet + "!" + column + row,
     valueInputOption: 'USER_ENTERED',
     values: [[value]]
   }).then(successCallback, errorCallback);

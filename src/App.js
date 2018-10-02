@@ -7,6 +7,7 @@ import { initConfig } from './APIConfig';
 import Dropdown from 'react-dropdown'
 import 'react-dropdown/style.css'
 import TilmeldModal from './components/TilmeldModal/';
+import RegistrerModal from './components/RegistrerModal';
 
 
 const options = [
@@ -72,9 +73,12 @@ class App extends Component {
     }
   }
 
-  LoadUser(user) {
-    if (user) {
+  LoadUser(user, isRegistered) {
+    if (isRegistered) {
       this.setState({ værelsesnr: user.værelsesnr, navn: user.navn });
+    }
+    else {
+      this.setState({ showRegister: true, værelsesnr: user.værelsesnr, navn: user.navn, email: user.email });
     }
   }
 
@@ -90,7 +94,16 @@ class App extends Component {
           />
           {!this.state.authenticated && this.state.dage &&
             (<button className="btn" onClick={() => checkAuth(false, this.handleAuth.bind(this))}>Log ind</button>)}
+
           {this.state.navn && (<div>Logget ind som {this.state.navn}</div>)}
+
+          {this.state.authenticated && this.state.showRegister &&
+            (<RegistrerModal
+              user={{ værelsesnr: this.state.værelsesnr, navn: this.state.navn, email: this.state.email }}
+              onGem={(værelsesnr, navn) => this.setState({ showRegister: false, værelsesnr, navn })}
+            />
+            )}
+
         </div>
         {this.renderContent()}
       </div>
@@ -98,7 +111,6 @@ class App extends Component {
   }
 
   renderContent() {
-
     if (this.state.dage) {
       return (
         <div className="page">
