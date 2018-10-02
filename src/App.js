@@ -31,7 +31,7 @@ class App extends Component {
 
   componentDidMount() {
     window.gapi.load('client', () => {
-      loadClient(load(this.onLoad.bind(this)));
+      loadClient(load(this.onLoad.bind(this), this.state.uge, new Date().getFullYear()));
       checkAuth(true, this.handleAuth.bind(this));
     });
     initConfig(secretprint);
@@ -150,10 +150,10 @@ class App extends Component {
 
   renderTilmeld(dag) {
     if (this.checkTilmelding(this.state.værelsesnr, dag)) {
-      return (<button className="btn" onClick={() => console.log("implementer afmelding her")}>Afmeld</button>)
+      return (<button className="btn" onClick={() => this.tilmeld(this.state.værelsesnr, "", dag.dato)}>Afmeld</button>)
     }
     else
-      return (dag.kok && <TilmeldModal onTilmeld={(value, participants) => this.tilmeld(value, participants, dag.dato)} />)
+      return (dag.kok && <TilmeldModal onTilmeld={(value, participants) => this.tilmeld(value, participants, dag.dato)} roomNr={this.state.værelsesnr} />)
   }
 
   checkTilmelding(nr, dag) {
@@ -194,10 +194,10 @@ class App extends Component {
   tilmeld(roomNr, participants, dato) {
     var date = new Date(new Date().getFullYear(), 0, (1 + (this.state.uge - 1) * 7));
     date.setDate(dato.split('.')[0]);
-    if (this.state.authenticated) tilmeld(roomNr, this.state.uge, date, participants, null, error => console.log("Error tilmelding", error));
+    if (this.state.authenticated) tilmeld(roomNr, this.state.uge, date, participants, () => loadClient(load(this.onLoad.bind(this), this.state.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
     else checkAuth(false, (result) => {
       this.handleAuth(result);
-      tilmeld(roomNr, this.state.uge, date, participants, null, error => console.log("Error tilmelding", error));
+      tilmeld(roomNr, this.state.uge, date, participants, () => loadClient(load(this.onLoad.bind(this), this.state.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
     });
   }
 

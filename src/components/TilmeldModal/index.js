@@ -17,7 +17,7 @@ export default class TilmeldModal extends React.Component {
         super(props);
         this.state = {
             showModal: false,
-            value: rooms[0],
+            value: this.props.roomNr || rooms[0],
             participants: "1",
         };
 
@@ -26,6 +26,12 @@ export default class TilmeldModal extends React.Component {
         this.onRoomSelect = this.onRoomSelect.bind(this);
         this.onParticipantSelect = this.onParticipantSelect.bind(this);
         this.onTilmeld = this.onTilmeld.bind(this);
+    }
+
+    componentDidUpdate(prevprops) {
+        if (prevprops.roomNr !== this.props.roomNr) {
+            this.setState({ value: this.props.roomNr });
+        }
     }
 
     handleOpenModal() {
