@@ -1,15 +1,15 @@
 import { config, API } from './APIConfig';
 import { getFieldInfoForRoom, getMonthNameFromWeekNr } from "./GoogleSheet/converter";
-const testSheet = { sheetId: '166fSi7fmm7yeYSMVjvCrMp1DIoZLxn3vIKjQO9EjKCE', sheet: "ark2!" };
+const userSheet = { sheetId: '1XFbQJkN2faEI-ziWowvNs93OhOuP0SwBmClNcIZ3K9g', sheet: "brugerkonfiguration" };
 const liveSheet = { sheetId: '1LRPYmJEkluEhmA6Z3eGVuCxri-_jw6amV4pqumSI9rg', sheet: "september!" };
-var auth;
+
 
 /**
  * Get the user authentication status
  */
 export function checkAuth(immediate, callback) {
   // auth2 available, but the silent login flow when immediate = true gets blocked by browser. 
-  auth = window.gapi.auth.authorize({
+  window.gapi.auth.authorize({
     'client_id': config.clientId,
     'scope': "https://www.googleapis.com/auth/spreadsheets email openid profile",
     'fetch_basic_profile': true,
@@ -26,21 +26,29 @@ export function setClient(callback) {
 }
 
 
-/**
- * 
- * 
+/** 
+ * Loads all users
  */
-export function initUserConfig(token) {
+export function initUsersConfig(token, callback) {
   var userInfo = decodeJWT(token);
-  console.log("userinfo", userInfo);
 
-  const email = userInfo.email;
+  var email = userInfo.email;
 
   // Get first name if it is not equal to email which non-google accounts are.
-  const name = email !== userInfo.name ? userInfo.name.toString().split(" ")[0] : undefined;
-  console.log(name);
+  var name = email !== userInfo.name ? userInfo.name.toString().split(" ")[0] : undefined;
 
+  var loggedInUser = { værelse: undefined, email: email, navn: name };
 
+  loadUsersSheet((response) => { tryLoadUser(loggedInUser, response, callback); loadUsers(response) });
+}
+
+function loadUsers(users) {
+  // implement loading all users to somewhere that can provide alternative id from room nr to names
+}
+
+function tryLoadUser(loggedInUser, sheetUsers, callback) {
+  const user = sheetUsers.find((user) => user.email === loggedInUser.email);
+  callback(user);
 }
 
 function decodeJWT(rawToken) {
@@ -61,11 +69,44 @@ function decodeJWT(rawToken) {
   return decoded;
 }
 
+/**
+ * Load the month data from the madklub spreadsheet
+ */
+export function loadUsersSheet(callback) {
+  window.gapi.client.load('sheets', 'v4', () => {
+    window.gapi.client.sheets.spreadsheets.values.get({
+      spreadsheetId: userSheet.sheetId,
+      range: userSheet.sheet + '!A2:C'
+    }).then((response) => {
+      const data = response.result.values || []
+
+      let users = data.map((user, i) => {
+        let row = i + 1, // Save row ID for later update
+          værelsesnr = user[0],
+          email = user[1],
+          navn = user[2]
+
+        return {
+          row,
+          værelsesnr,
+          email,
+          navn
+        }
+      });
+
+      callback(
+        users
+      );
+    }, (response) => {
+      callback(false, response.result.error);
+    });
+  });
+}
 
 /**
  * Load the month data from the madklub spreadsheet
  */
-export function load(callback, weekNr, year) {
+export function loadMonth(callback, weekNr, year) {
   window.gapi.client.load('sheets', 'v4', () => {
     window.gapi.client.sheets.spreadsheets.values.get({
       spreadsheetId: liveSheet.sheetId,
@@ -124,8 +165,8 @@ export function load(callback, weekNr, year) {
  */
 export function updateCell(column, row, value, successCallback, errorCallback) {
   window.gapi.client.sheets.spreadsheets.values.update({
-    spreadsheetId: testSheet.sheetId,
-    range: testSheet.sheet + column + row,
+    spreadsheetId: "testSheet.sheetId",
+    range: "testSheet.sheet" + column + row,
     valueInputOption: 'USER_ENTERED',
     values: [[value]]
   }).then(successCallback, errorCallback);
