@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import currentWeekNumber from 'current-week-number';
-import { checkAuth, load, updateCell, loadClient, tilmeld } from './spreadsheet';
+import { checkAuth, load, initUserConfig, updateCell, setClient, tilmeld } from './spreadsheet';
 import 'react-tippy/dist/tippy.css';
 import { Tooltip } from 'react-tippy';
-import { secretprint, initConfig } from './printsecret';
+import { initConfig } from './APIConfig';
 import Dropdown from 'react-dropdown'
 import 'react-dropdown/style.css'
 import TilmeldModal from './components/TilmeldModal/';
@@ -30,11 +30,10 @@ class App extends Component {
   }
 
   componentDidMount() {
-    window.gapi.load('client', () => {
-      loadClient(load(this.onLoad.bind(this), this.state.uge, new Date().getFullYear()));
+    initConfig(window.gapi.load('client', () => {
+      setClient(load(this.onLoad.bind(this), this.state.uge, new Date().getFullYear()));
       checkAuth(true, this.handleAuth.bind(this));
-    });
-    initConfig(secretprint);
+    }));
   }
 
   /**
@@ -45,6 +44,9 @@ class App extends Component {
       this.setState({
         authenticated: true
       }, () => console.log("authenticated.."));
+
+      //console.log(authResult);
+      initUserConfig(authResult);
       // following load might have to happen only after udate to sheet
       load(this.onLoad.bind(this), this.state.uge, new Date().getFullYear());
     } else {
@@ -177,37 +179,20 @@ class App extends Component {
     })
   }
 
-  /**
-   * Request Google authentification
-   */
-  authenticate(e) {
-    e.preventDefault();
-    if (this.state.authenticated) this.insertTest();// add update sheet
-    else checkAuth(false, (result) => { this.handleAuth(result); this.insertTest() });
-  }
-
   updateData() {
     if (this.state.authenticated) load(this.onLoad.bind(this), this.state.uge, new Date().getFullYear());
-    else checkAuth(false, (result) => { this.handleAuth(result); load(this.onLoad.bind(this), this.state.uge, new Date().getFullYear()); });
+    else checkAuth(true, (result) => { this.handleAuth(result); load(this.onLoad.bind(this), this.state.uge, new Date().getFullYear()); });
   }
 
   tilmeld(roomNr, participants, dato) {
     var date = new Date(new Date().getFullYear(), 0, (1 + (this.state.uge - 1) * 7));
     date.setDate(dato.split('.')[0]);
-    if (this.state.authenticated) tilmeld(roomNr, this.state.uge, date, participants, () => loadClient(load(this.onLoad.bind(this), this.state.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
+    if (this.state.authenticated) tilmeld(roomNr, this.state.uge, date, participants, () => setClient(load(this.onLoad.bind(this), this.state.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
     else checkAuth(false, (result) => {
       this.handleAuth(result);
-      tilmeld(roomNr, this.state.uge, date, participants, () => loadClient(load(this.onLoad.bind(this), this.state.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
+      tilmeld(roomNr, this.state.uge, date, participants, () => setClient(load(this.onLoad.bind(this), this.state.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
     });
   }
-
-  insertTest() {
-    updateCell('C', 2, "test", () => console.log("Done"), (error) => {
-      console.log("error while inserting", error);
-    })
-  }
-
-
 }
 
 export default App;

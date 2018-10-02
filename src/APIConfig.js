@@ -1,6 +1,10 @@
 export var config = undefined;
 export var API = undefined;
 
+
+/**
+ * Get the API Key and Client Id and do callback
+ */
 export function initConfig(callback) {
     if (process.env.NODE_ENV === 'development') {
         import('./config').then((Config) => {
@@ -15,8 +19,4 @@ export function initConfig(callback) {
         if (callback) { callback(); }
     }
     else { console.log("!!!IMPORTANT!!! No env var found"); }
-}
-
-export function secretprint() {
-    console.log("this is callback after init. Replace this with call for receiving user info til room nr");
 }

@@ -1,25 +1,69 @@
-import { config, API } from './printsecret';
+import { config, API } from './APIConfig';
 import { getFieldInfoForRoom, getMonthNameFromWeekNr } from "./GoogleSheet/converter";
 const testSheet = { sheetId: '166fSi7fmm7yeYSMVjvCrMp1DIoZLxn3vIKjQO9EjKCE', sheet: "ark2!" };
 const liveSheet = { sheetId: '1LRPYmJEkluEhmA6Z3eGVuCxri-_jw6amV4pqumSI9rg', sheet: "september!" };
+var auth;
+
 /**
  * Get the user authentication status
  */
 export function checkAuth(immediate, callback) {
   // auth2 available, but the silent login flow when immediate = true gets blocked by browser. 
-  window.gapi.auth.authorize({
+  auth = window.gapi.auth.authorize({
     'client_id': config.clientId,
-    'scope': "https://www.googleapis.com/auth/spreadsheets",
+    'scope': "https://www.googleapis.com/auth/spreadsheets email openid profile",
+    'fetch_basic_profile': true,
+    'response_type': "token id_token",
     'immediate': immediate
   }, callback);
-}//.then((result) => { console.log(result); callback(result) });
-
-export function loadClient(callback) {
-  window.gapi.client.setApiKey(API.key, callback);
 }
 
 /**
- * Load the data from the spreadsheet
+ * Set the client api key
+ */
+export function setClient(callback) {
+  window.gapi.client.setApiKey(API.key, callback);
+}
+
+
+/**
+ * 
+ * 
+ */
+export function initUserConfig(token) {
+  var userInfo = decodeJWT(token);
+  console.log("userinfo", userInfo);
+
+  const email = userInfo.email;
+
+  // Get first name if it is not equal to email which non-google accounts are.
+  const name = email !== userInfo.name ? userInfo.name.toString().split(" ")[0] : undefined;
+  console.log(name);
+
+
+}
+
+function decodeJWT(rawToken) {
+  var decoded;
+
+  if (rawToken && rawToken.id_token) {
+    var jwt = rawToken.id_token;
+
+    var parts = jwt.split('.');
+
+    try {
+      decoded = JSON.parse(decodeURIComponent(escape(window.atob(parts[1]))));
+    }
+    catch (err) {
+      // Handle Error
+    }
+  }
+  return decoded;
+}
+
+
+/**
+ * Load the month data from the madklub spreadsheet
  */
 export function load(callback, weekNr, year) {
   window.gapi.client.load('sheets', 'v4', () => {
