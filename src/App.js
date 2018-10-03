@@ -29,11 +29,12 @@ class App extends Component {
     this.OnNextWeekPressed = this.OnNextWeekPressed.bind(this);
     this.onPreviousWeekPressed = this.onPreviousWeekPressed.bind(this);
     this.updateData = this.updateData.bind(this);
+    this.onLoad = this.onLoad.bind(this);
   }
 
   componentDidMount() {
     initConfig(window.gapi.load('client', () => {
-      setClient(loadMonth(this.onLoad.bind(this), this.state.uge, new Date().getFullYear()));
+      setClient(loadMonth(this.onLoad, this.state.uge, new Date().getFullYear()));
       checkAuth(true, this.handleAuth.bind(this));
     }));
   }
@@ -50,7 +51,7 @@ class App extends Component {
       //console.log(authResult);
       initUsersConfig(authResult, this.LoadUser.bind(this));
       // following load might have to happen only after udate to sheet
-      loadMonth(this.onLoad.bind(this), this.state.uge, new Date().getFullYear());
+      loadMonth(this.onLoad, this.state.uge, new Date().getFullYear());
     } else {
       console.log("auth failed?", authResult.error);
       this.setState({
@@ -200,17 +201,18 @@ class App extends Component {
   }
 
   updateData() {
-    if (this.state.authenticated) loadMonth(this.onLoad.bind(this), this.state.uge, new Date().getFullYear());
-    else checkAuth(true, (result) => { this.handleAuth(result); loadMonth(this.onLoad.bind(this), this.state.uge, new Date().getFullYear()); });
+    if (this.state.authenticated) loadMonth(this.onLoad, this.state.uge, new Date().getFullYear());
+    else checkAuth(true, (result) => { this.handleAuth(result); loadMonth(this.onLoad, this.state.uge, new Date().getFullYear()); });
   }
 
   tilmeld(roomNr, participants, dato) {
     var date = new Date(new Date().getFullYear(), 0, (1 + (this.state.uge - 1) * 7));
     date.setDate(dato.split('.')[0]);
-    if (this.state.authenticated) tilmeld(roomNr, this.state.uge, date, participants, () => setClient(loadMonth(this.onLoad.bind(this), this.state.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
+    console.log(date);
+    if (this.state.authenticated) tilmeld(roomNr, this.state.uge, date, participants, () => setClient(loadMonth(this.onLoad, this.state.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
     else checkAuth(false, (result) => {
       this.handleAuth(result);
-      tilmeld(roomNr, this.state.uge, date, participants, () => setClient(loadMonth(this.onLoad.bind(this), this.state.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
+      tilmeld(roomNr, this.state.uge, date, participants, () => setClient(loadMonth(this.onLoad, this.state.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
     });
   }
 }
