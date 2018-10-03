@@ -7,15 +7,17 @@ import { checkAuth, load, loadClient, tilmeld } from '../spreadsheet';
 export default class DagComponent extends React.Component {
     constructor(props) {
         super(props);
+        const expandable = this.props.dag.beskrivelse || this.props.dag.lukker ? true : false;
         this.state = {
-            blabla: ""
+            expanded: false,
+            expandable: expandable
         };
     }
 
-    render() {//key={this.props.index}
+    render() {
         return (
-            <div  className={`${this.props.dag.kok ? "day-list_item" : "day-list_item-ingen-madklub"}`}>
-                <h2 >{this.props.dag.dato}</h2>
+            <div className={`${this.props.dag.kok ? "day-list_item" : "day-list_item-ingen-madklub"}`}>
+                <h2 >{this.props.dag.ugedag} {this.props.dag.dato}</h2>
                 <span className="madklub" title="">{this.props.dag.kok || "Ingen madklub"}</span>
                 {this.props.dag.kok && (
                     <Tooltip
@@ -25,16 +27,42 @@ export default class DagComponent extends React.Component {
                         trigger="click"
                     >
                         <span>
-                            &nbsp;- tilmeldte: <span className="tilmeldte-clickable">{this.props.dag.tilmeldte && this.props.dag.antalTilmeldte}</span>
+                            &nbsp;- tilmeldte: <span className="clickable">{this.props.dag.tilmeldte && this.props.dag.antalTilmeldte}</span>
                         </span>
                     </Tooltip>
                 )}
                 {this.props.dag.kok && this.props.værelsesnr && this.renderTilmeld(this.props.dag)}
+                {this.state.expanded && this.renderExpanded()}
+                {this.props.dag.kok && this.state.expandable &&
+                    (<div className="clickable dagcomponent-toggle-expand" onClick={() => this.toggleExpand()}>
+                        {!this.state.expanded ? "\u225A" : "\u2259"}
+                    </div>)}
             </div>
         );
     }
 
+    renderExpanded() {
+        return (
+            <div>
+                {this.props.dag.beskrivelse && (
+                    <div>
+                        <span>{this.props.dag.beskrivelse}</span>
+                    </div>)}
+                {this.props.dag.lukker && (
+                    <div>
+                        <span>Lukker kl. {this.props.dag.lukker}</span>
+                    </div>)}
+                {this.props.dag.kuvertpris && this.props.dag.kuvertpris !== "0,0" && (
+                    <div>
+                        <span>Kuvertpris: {this.props.dag.kuvertpris} kr.</span>
+                    </div>)}
+            </div>)
+    }
 
+    toggleExpand() {
+        if (this.state.expanded) this.setState({ expanded: false });
+        else this.setState({ expanded: true });
+    }
 
     renderTilmeld(dag) {
         if (this.checkTilmelding(this.props.værelsesnr, dag)) {

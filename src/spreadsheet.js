@@ -37,7 +37,10 @@ export function load(callback, weekNr, year) {
           ugedag = day[3],
           kok = day[4],
           antalTilmeldte = day[8],
-          tilmeldte = []
+          tilmeldte = [],
+          beskrivelse = day[5],
+          lukker = day[6],
+          kuvertpris = day[9]
 
         for (let index = 11; index < day.length; index++) {
           if (day[index] !== "") {
@@ -62,7 +65,10 @@ export function load(callback, weekNr, year) {
           ugedag,
           kok,
           antalTilmeldte,
-          tilmeldte
+          tilmeldte,
+          beskrivelse,
+          lukker,
+          kuvertpris
         }
       });
 

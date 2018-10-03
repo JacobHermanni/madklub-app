@@ -62,10 +62,22 @@ body > svg {
   box-shadow: none !important;
 }
 
-.tilmeldte-clickable {
+.clickable {
   color: #4285f4;
   cursor: pointer;
-  text-decoration-line: underline;
+}
+
+div.tilmeldte > span > span {
+  padding-right: 1em;
+}
+
+.dagcomponent-toggle-expand  {
+  background-color: #187ef40d;
+  width: 17%;
+  margin: 0 auto;
+  margin-bottom: -0.7em;
+  margin-top: 0.4em;
+  line-height: 1em;
 }
 
 .nav-header {
@@ -107,10 +119,11 @@ body > svg {
   text-shadow: 0 0 10px #7200ff;
 }
 
-.day-list_item > button {
+.day-list_item > button, .day-list_item > div > button {
   font-size: 1em;
-  padding: 0.3em;
-  margin-left: 1em;
+  padding: 0.2em;
+  margin-top: 0.3em;
+  margin-bottom: 0.3em;
 }
 
 .days > div {
