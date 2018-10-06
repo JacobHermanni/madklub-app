@@ -126,7 +126,8 @@ export function loadMonth(callback, weekNr, year) {
           tilmeldte = [],
           beskrivelse = day[5],
           lukker = day[6],
-          kuvertpris = day[9]
+          kuvertpris = day[9],
+          veggie = day[10]
 
         for (let index = 11; index < day.length; index++) {
           if (day[index] !== "") {
@@ -154,7 +155,8 @@ export function loadMonth(callback, weekNr, year) {
           tilmeldte,
           beskrivelse,
           lukker,
-          kuvertpris
+          kuvertpris,
+          veggie
         }
       });
 

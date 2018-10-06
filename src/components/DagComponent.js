@@ -14,6 +14,12 @@ export default class DagComponent extends React.Component {
         };
     }
 
+    componentDidUpdate(prevprops) {
+        if (prevprops !== this.props) {
+            this.setState({ expanded: false });
+        }
+    }
+
     render() {
         return (
             <div className={`${this.props.dag.kok ? "day-list_item" : "day-list_item-ingen-madklub"}`}>
@@ -50,12 +56,17 @@ export default class DagComponent extends React.Component {
                     </div>)}
                 {this.props.dag.lukker && (
                     <div>
-                        <span>Lukker kl. {this.props.dag.lukker}</span>
+                        {this.props.dag.lukker.toLowerCase() === "lukket"
+                            ? (<span>Lukket</span>)
+                            : (<span>Lukker kl. {this.props.dag.lukker}</span>)}
                     </div>)}
                 {this.props.dag.kuvertpris && this.props.dag.kuvertpris !== "0,0" && (
                     <div>
                         <span>Kuvertpris: {this.props.dag.kuvertpris} kr.</span>
                     </div>)}
+                <div>
+                    <span>Veggie: {this.props.dag.veggie}</span>
+                </div>
             </div>)
     }
 
