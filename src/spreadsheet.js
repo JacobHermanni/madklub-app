@@ -48,7 +48,7 @@ function loadUsers(users) {
 
 function tryLoadUser(loggedInUser, sheetUsers, callback) {
   const user = sheetUsers.find((user) => user.email === loggedInUser.email);
-  if (user) callback(user, true); 
+  if (user) callback(user, true);
   else callback(loggedInUser, false);
 }
 
@@ -142,7 +142,7 @@ export function loadMonth(callback, weekNr, year) {
           }
         }
 
-        if (!tilmeldte.find(nr => Number(nr) === Number(day[4]))) tilmeldte.push(day[4]);
+        if (!tilmeldte.find(nr => nr.toString().includes(day[4].toString()))) tilmeldte.push(day[4]);
 
         return {
           row,
