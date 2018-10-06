@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import currentWeekNumber from 'current-week-number';
-import { checkAuth, load, updateCell, loadClient } from './spreadsheet';
-import 'react-tippy/dist/tippy.css';
-import { secretprint, initConfig } from './printsecret';
-import Dropdown from 'react-dropdown'
+import { initConfig } from './APIConfig';
 import 'react-dropdown/style.css'
 import DagComponent from './components/DagComponent';
+import { checkAuth, loadMonth, initUsersConfig, setClient } from './spreadsheet';
+import 'react-tippy/dist/tippy.css';
+import Dropdown from 'react-dropdown'
+import RegistrerModal from './components/RegistrerModal';
 
 
 const options = [
@@ -21,7 +22,8 @@ class App extends Component {
       dage: undefined,
       authenticated: false,
       uge: currentWeekNumber(),
-      værelsesnr: undefined
+      værelsesnr: undefined,
+      navn: undefined
     }
     this.OnNextWeekPressed = this.OnNextWeekPressed.bind(this);
     this.onPreviousWeekPressed = this.onPreviousWeekPressed.bind(this);
@@ -30,11 +32,10 @@ class App extends Component {
   }
 
   componentDidMount() {
-    window.gapi.load('client', () => {
-      loadClient(load(this.onLoad.bind(this), this.state.uge, new Date().getFullYear()));
+    initConfig(window.gapi.load('client', () => {
+      setClient(loadMonth(this.onLoad, this.state.uge, new Date().getFullYear()));
       checkAuth(true, this.handleAuth.bind(this));
-    });
-    initConfig(secretprint);
+    }));
   }
 
   /**
@@ -45,8 +46,11 @@ class App extends Component {
       this.setState({
         authenticated: true
       }, () => console.log("authenticated.."));
+
+      //console.log(authResult);
+      initUsersConfig(authResult, this.LoadUser.bind(this));
       // following load might have to happen only after udate to sheet
-      load(this.onLoad.bind(this), this.state.uge, new Date().getFullYear());
+      loadMonth(this.onLoad, this.state.uge, new Date().getFullYear());
     } else {
       console.log("auth failed?", authResult.error);
       this.setState({
@@ -69,6 +73,15 @@ class App extends Component {
     }
   }
 
+  LoadUser(user, isRegistered) {
+    if (isRegistered) {
+      this.setState({ værelsesnr: user.værelsesnr, navn: user.navn });
+    }
+    else {
+      this.setState({ showRegister: true, værelsesnr: user.værelsesnr, navn: user.navn, email: user.email });
+    }
+  }
+
   render() {
     return (
       <div className="app">
@@ -81,6 +94,16 @@ class App extends Component {
           />
           {!this.state.authenticated && this.state.dage &&
             (<button className="btn" onClick={() => checkAuth(false, this.handleAuth.bind(this))}>Log ind</button>)}
+
+          {this.state.navn && (<div>Logget ind som {this.state.navn}</div>)}
+
+          {this.state.authenticated && this.state.showRegister &&
+            (<RegistrerModal
+              user={{ værelsesnr: this.state.værelsesnr, navn: this.state.navn, email: this.state.email }}
+              onGem={(værelsesnr, navn) => this.setState({ showRegister: false, værelsesnr, navn })}
+            />
+            )}
+
         </div>
         {this.renderContent()}
       </div>
@@ -88,7 +111,6 @@ class App extends Component {
   }
 
   renderContent() {
-
     if (this.state.dage) {
       return (
         <div className="page">
@@ -148,27 +170,10 @@ class App extends Component {
     })
   }
 
-  /**
-   * Request Google authentification
-   */
-  authenticate(e) {
-    e.preventDefault();
-    if (this.state.authenticated) this.insertTest();// add update sheet
-    else checkAuth(false, (result) => { this.handleAuth(result); this.insertTest() });
-  }
-
   updateData() {
-    if (this.state.authenticated) load(this.onLoad.bind(this), this.state.uge, new Date().getFullYear());
-    else checkAuth(false, (result) => { this.handleAuth(result); load(this.onLoad.bind(this), this.state.uge, new Date().getFullYear()); });
+    if (this.state.authenticated) loadMonth(this.onLoad, this.state.uge, new Date().getFullYear());
+    else checkAuth(true, (result) => { this.handleAuth(result); loadMonth(this.onLoad, this.state.uge, new Date().getFullYear()); });
   }
-
-  insertTest() {
-    updateCell('C', 2, "test", () => console.log("Done"), (error) => {
-      console.log("error while inserting", error);
-    })
-  }
-
-
 }
 
 export default App;

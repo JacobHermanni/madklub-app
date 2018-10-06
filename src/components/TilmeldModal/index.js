@@ -8,7 +8,7 @@ const rooms = [
     "317", "318", "319", "320", "321", "322", "323", "324", "325", "326", "327", "328", "329", "330", "331"
 ];
 
-const participants = [ "0", "1", "2", "3", "4", "5", "6" ];
+const participants = [ "1", "2", "3", "4", "5", "6" ];
 
 ReactModal.setAppElement('#root')
 
@@ -69,13 +69,13 @@ export default class TilmeldModal extends React.Component {
                         </div>
                         <br />
                         <div className="modal-content">
-                            <label><h3>Værelses nummber:</h3>
+                            <label><h3>Værelsesnummer:</h3>
                                 <Dropdown options={rooms} onChange={this.onRoomSelect} value={this.state.value} className="modal-dropdown"/>
                             </label>
                             <label><h3>Antal:</h3>
                                 <Dropdown options={participants} onChange={this.onParticipantSelect} value={this.state.participants} className="modal-dropdown"/>
                             </label>
-                            <button btn="btn" onClick={this.onTilmeld}>Tilmeld</button>
+                            <button className="btn" onClick={this.onTilmeld}>Tilmeld</button>
                         </div>
                     </ReactModal>
             </div>
