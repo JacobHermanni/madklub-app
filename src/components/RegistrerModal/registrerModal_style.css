@@ -1,0 +1,67 @@
+.modal_btn {
+    margin-top: 1em;
+}
+
+.Modal {
+    position: absolute;
+    min-width: 300px;
+    min-height: 400px;
+    padding: 0;
+    top: calc(50% - 200px);
+    left: calc(50% - 150px);
+    -webkit-box-shadow: 0 0 1px #3936ff70, 0 0 1px #3936ff70;
+    box-shadow: 0 0 1px #3936ff70, 0 0 1px #3936ff70;
+    color: white;
+    font-size: 1.4em;
+    text-shadow: 0 1px 4px rgba(164, 164, 189, 0.4);
+    background: rgb(3, 15, 27);
+}
+
+.modal-input {
+    font-size: 1em;
+    width: 50%;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #333;
+    padding: 0.2em;
+}
+
+.Modal:-moz-focusring {
+    color: transparent;
+    text-shadow: 0 0 0 #000;
+}
+
+.Overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: transparent;
+}
+
+.modal-rightHeader {
+    float: right;
+}
+
+.modal-closeBottom {
+    margin: 5px;
+    background-color: transparent;
+    color: white;
+    border: none;
+}
+
+.modal-closeBottom:hover {
+    cursor: pointer;
+}
+
+.modal-content {
+    padding: 0.4em;
+    margin: 0;
+}
+
+.modal-content > label > h3 {
+    margin: 0px;
+}
+.modal-content >button {
+    margin-top: 10px;
+}

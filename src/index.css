@@ -42,11 +42,18 @@ body > svg {
 
 .room-number {
   width: 170px;
-  padding-bottom: 8pt;
+  padding-bottom: 8pt;    color: white;
+  font-size: 1em;
+  text-shadow: 0 2px 4px rgba(164, 164, 189, 0.4);
+  display: inline-block;
 }
 
 .room-number > .Dropdown-menu {
   max-height: 300px;
+}
+
+.room-number > button {
+  margin-top: 1em;
 }
 
 .day-list_item {
@@ -65,7 +72,6 @@ body > svg {
 .tilmeldte-clickable {
   color: #4285f4;
   cursor: pointer;
-  text-decoration-line: underline;
 }
 
 .nav-header {
@@ -79,6 +85,11 @@ body > svg {
   font-size: 1.2em;
   text-shadow: 0 2px 4px rgba(164, 164, 189, 0.4);
   height: 40px;
+  margin: 0.3em 0 0.7em 0;
+}
+
+.nav-header > button {
+  margin-top: 2em;
 }
 
 .nav-header > ul {
@@ -88,7 +99,12 @@ body > svg {
 }
 
 .btn {
-  border-radius:5px;
+  color: white;
+  font-size: inherit;
+  /* background-color: #004262; */
+  display: inline-block;
+  padding: 12px 24px;
+  border-radius: 55px;
   border: none;
   outline: none;
   cursor: pointer;
@@ -107,9 +123,9 @@ body > svg {
   text-shadow: 0 0 10px #7200ff;
 }
 
-.day-list_item > button {
+.day-list_item > button, .day-list_item > div > button {
   font-size: 1em;
-  padding: 0.3em;
+  padding: 0.4em;
   margin-left: 1em;
 }
 
@@ -136,7 +152,7 @@ body > svg {
     }
   }
 
-h2 {
+.days > div > h2 {
   font-family: 'Roboto Slab';
   font-weight: 700;
   font-size: 14px;
@@ -147,7 +163,7 @@ h2 {
 
 
 
-.btn {
+/* .btn {
   display: inline-block;
   padding: 12px 24px;
 
@@ -169,7 +185,7 @@ h2 {
   .btn:active {
     position: relative;
     top: 1px;
-  }
+  } */
 
 
 

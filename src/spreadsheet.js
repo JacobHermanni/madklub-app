@@ -1,7 +1,9 @@
-import { config, API } from './printsecret';
+import { config, API } from './APIConfig';
 import { getFieldInfoForRoom, getMonthNameFromWeekNr } from "./GoogleSheet/converter";
-const testSheet = { sheetId: '166fSi7fmm7yeYSMVjvCrMp1DIoZLxn3vIKjQO9EjKCE', sheet: "ark2!" };
+const userSheet = { sheetId: '1XFbQJkN2faEI-ziWowvNs93OhOuP0SwBmClNcIZ3K9g', sheet: "brugerkonfiguration" };
 const liveSheet = { sheetId: '1LRPYmJEkluEhmA6Z3eGVuCxri-_jw6amV4pqumSI9rg', sheet: "september!" };
+
+
 /**
  * Get the user authentication status
  */
@@ -9,19 +11,103 @@ export function checkAuth(immediate, callback) {
   // auth2 available, but the silent login flow when immediate = true gets blocked by browser. 
   window.gapi.auth.authorize({
     'client_id': config.clientId,
-    'scope': "https://www.googleapis.com/auth/spreadsheets",
+    'scope': "https://www.googleapis.com/auth/spreadsheets email openid profile",
+    'fetch_basic_profile': true,
+    'response_type': "token id_token",
     'immediate': immediate
   }, callback);
-}//.then((result) => { console.log(result); callback(result) });
-
-export function loadClient(callback) {
-  window.gapi.client.setApiKey(API.key, callback);
 }
 
 /**
- * Load the data from the spreadsheet
+ * Set the client api key
  */
-export function load(callback, weekNr, year) {
+export function setClient(callback) {
+  window.gapi.client.setApiKey(API.key, callback);
+}
+
+
+/** 
+ * Loads all users
+ */
+export function initUsersConfig(token, callback) {
+  var userInfo = decodeJWT(token);
+
+  var email = userInfo.email;
+
+  // Get first name if it is not equal to email which non-google accounts are.
+  var name = email !== userInfo.name ? userInfo.name.toString().split(" ")[0] : undefined;
+
+  var loggedInUser = { værelse: undefined, email: email, navn: name };
+
+  loadUsersSheet((response) => { tryLoadUser(loggedInUser, response, callback); loadUsers(response) });
+}
+
+function loadUsers(users) {
+  // implement loading all users to somewhere that can provide alternative id from room nr to names
+}
+
+function tryLoadUser(loggedInUser, sheetUsers, callback) {
+  const user = sheetUsers.find((user) => user.email === loggedInUser.email);
+  if (user) callback(user, true); 
+  else callback(loggedInUser, false);
+}
+
+function decodeJWT(rawToken) {
+  var decoded;
+
+  if (rawToken && rawToken.id_token) {
+    var jwt = rawToken.id_token;
+
+    var parts = jwt.split('.');
+
+    try {
+      decoded = JSON.parse(decodeURIComponent(escape(window.atob(parts[1]))));
+    }
+    catch (err) {
+      // Handle Error
+    }
+  }
+  return decoded;
+}
+
+/**
+ * Load the month data from the madklub spreadsheet
+ */
+export function loadUsersSheet(callback) {
+  window.gapi.client.load('sheets', 'v4', () => {
+    window.gapi.client.sheets.spreadsheets.values.get({
+      spreadsheetId: userSheet.sheetId,
+      range: userSheet.sheet + '!A2:C'
+    }).then((response) => {
+      const data = response.result.values || []
+
+      let users = data.map((user, i) => {
+        let row = i + 1, // Save row ID for later update
+          værelsesnr = user[0],
+          navn = user[1],
+          email = user[2]
+
+        return {
+          row,
+          værelsesnr,
+          navn,
+          email
+        }
+      });
+
+      callback(
+        users
+      );
+    }, (response) => {
+      callback(false, response.result.error);
+    });
+  });
+}
+
+/**
+ * Load the month data from the madklub spreadsheet
+ */
+export function loadMonth(callback, weekNr, year) {
   window.gapi.client.load('sheets', 'v4', () => {
     window.gapi.client.sheets.spreadsheets.values.get({
       spreadsheetId: liveSheet.sheetId,
@@ -80,8 +166,8 @@ export function load(callback, weekNr, year) {
  */
 export function updateCell(column, row, value, successCallback, errorCallback) {
   window.gapi.client.sheets.spreadsheets.values.update({
-    spreadsheetId: testSheet.sheetId,
-    range: testSheet.sheet + column + row,
+    spreadsheetId: userSheet.sheetId,
+    range: userSheet.sheet + "!" + column + row,
     valueInputOption: 'USER_ENTERED',
     values: [[value]]
   }).then(successCallback, errorCallback);
