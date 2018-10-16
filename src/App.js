@@ -173,10 +173,10 @@ class App extends Component {
 
   renderTilmeld(dag) {
     if (this.checkTilmelding(this.state.værelsesnr, dag)) {
-      return (<button className="btn" onClick={() => this.tilmeld(this.state.værelsesnr, "", dag.dato)}>Afmeld</button>)
+      return (<button className="btn" onClick={() => this.tilmeld(this.state.værelsesnr, "", dag.dato, dag.row)}>Afmeld</button>)
     }
     else
-      return (dag.kok && <TilmeldModal onTilmeld={(value, participants) => this.tilmeld(value, participants, dag.dato)} roomNr={this.state.værelsesnr} />)
+      return (dag.kok && <TilmeldModal onTilmeld={(value, participants) => this.tilmeld(value, participants, dag.dato, dag.row)} roomNr={this.state.værelsesnr} />)
   }
 
   checkTilmelding(nr, dag) {
@@ -205,11 +205,11 @@ class App extends Component {
     else checkAuth(true, (result) => { this.handleAuth(result); loadMonth(this.onLoad, this.state.uge, new Date().getFullYear()); });
   }
 
-  tilmeld(roomNr, participants, dato) {
+  tilmeld(roomNr, participants, dato, row) {
     var date = new Date(new Date().getFullYear(), 0, (1 + (this.state.uge - 1) * 7));
     date.setDate(dato.split('.')[0]);
     console.log(date);
-    if (this.state.authenticated) tilmeld(roomNr, this.state.uge, date, participants, () => setClient(loadMonth(this.onLoad, this.state.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
+    if (this.state.authenticated) tilmeld(roomNr, this.state.uge, date, row, participants, () => setClient(loadMonth(this.onLoad, this.state.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
     else checkAuth(false, (result) => {
       this.handleAuth(result);
       tilmeld(roomNr, this.state.uge, date, participants, () => setClient(loadMonth(this.onLoad, this.state.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));

@@ -82,7 +82,7 @@ export function loadUsersSheet(callback) {
       const data = response.result.values || []
 
       let users = data.map((user, i) => {
-        let row = i + 1, // Save row ID for later update
+        let row =  i, // Save row ID for later update
           værelsesnr = user[0],
           navn = user[1],
           email = user[2]
@@ -173,11 +173,11 @@ export function updateCell(column, row, value, successCallback, errorCallback) {
   }).then(successCallback, errorCallback);
 }
 
-export function tilmeld(roomNr, weekNr, date, participants, successCallback, errorCallback) {
-  var field = getFieldInfoForRoom(roomNr, weekNr, date.getMonth() + 1, date.getFullYear(), date.getDate());
+export function tilmeld(roomNr, weekNr, date, row, participants, successCallback, errorCallback) {
+  var field = getFieldInfoForRoom(roomNr, weekNr, date.getFullYear());
   window.gapi.client.sheets.spreadsheets.values.update({
     spreadsheetId: liveSheet.sheetId,
-    range: `${field.sheet}!${field.letter}${field.row}`,
+    range: `${field.sheet}!${field.letter}${row + 2}`,
     valueInputOption: 'USER_ENTERED',
     values: [[participants]]
   }).then(successCallback, errorCallback);
