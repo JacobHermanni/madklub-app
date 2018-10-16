@@ -76,11 +76,11 @@ export default class DagComponent extends React.Component {
     }
 
     renderTilmeld(dag) {
-        if (this.checkTilmelding(this.props.værelsesnr, dag)) {
-            return (<button className="btn" onClick={() => this.tilmeld(this.props.værelsesnr, "", dag.dato)}>Afmeld</button>)
+        if (this.checkTilmelding(this.state.værelsesnr, dag)) {
+            return (<button className="btn" onClick={() => this.tilmeld(this.state.værelsesnr, "", dag.dato, dag.row)}>Afmeld</button>)
         }
         else
-            return (dag.kok && <TilmeldModal onTilmeld={(value, participants) => this.tilmeld(value, participants, dag.dato)} roomNr={this.props.værelsesnr} />)
+            return (dag.kok && <TilmeldModal onTilmeld={(value, participants) => this.tilmeld(value, participants, dag.dato, dag.row)} roomNr={this.state.værelsesnr} />)
     }
 
     checkTilmelding(nr, dag) {
@@ -92,13 +92,14 @@ export default class DagComponent extends React.Component {
         return isTrue;
     }
 
-    tilmeld(roomNr, participants, dato) {
-        var date = new Date(new Date().getFullYear(), 0, (1 + (this.props.uge - 1) * 7));
+    tilmeld(roomNr, participants, dato, row) {
+        var date = new Date(new Date().getFullYear(), 0, (1 + (this.state.uge - 1) * 7));
         date.setDate(dato.split('.')[0]);
-        if (this.props.authenticated) tilmeld(roomNr, this.props.uge, date, participants, () => setClient(loadMonth(this.props.onLoad, this.props.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
+        console.log(date);
+        if (this.state.authenticated) tilmeld(roomNr, this.state.uge, date, row, participants, () => setClient(loadMonth(this.onLoad, this.state.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
         else checkAuth(false, (result) => {
             this.handleAuth(result);
-            tilmeld(roomNr, this.props.uge, date, participants, () => setClient(loadMonth(this.props.onLoad, this.props.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
+            tilmeld(roomNr, this.state.uge, date, participants, () => setClient(loadMonth(this.onLoad, this.state.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
         });
     }
 }

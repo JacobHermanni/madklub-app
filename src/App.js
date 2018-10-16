@@ -157,7 +157,6 @@ class App extends Component {
     }
   }
 
-
   OnNextWeekPressed() {
     this.setState({ uge: this.state.uge + 1 }, () => {
       this.updateData();
