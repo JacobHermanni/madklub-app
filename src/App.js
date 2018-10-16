@@ -39,6 +39,9 @@ class App extends Component {
     }));
   }
 
+  
+// this comment is a test also
+
   /**
    * Check user authenification status and set app state accordingly
    */
