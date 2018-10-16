@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import currentWeekNumber from 'current-week-number';
-import { checkAuth, loadMonth, initUsersConfig, updateCell, setClient, tilmeld } from './spreadsheet';
-import 'react-tippy/dist/tippy.css';
-import { Tooltip } from 'react-tippy';
 import { initConfig } from './APIConfig';
-import Dropdown from 'react-dropdown'
 import 'react-dropdown/style.css'
-import TilmeldModal from './components/TilmeldModal/';
+import DagComponent from './components/DagComponent';
+import { checkAuth, loadMonth, initUsersConfig, setClient } from './spreadsheet';
+import 'react-tippy/dist/tippy.css';
+import Dropdown from 'react-dropdown'
 import RegistrerModal from './components/RegistrerModal';
 
 
@@ -131,27 +130,15 @@ class App extends Component {
           </div>
 
           <div className="days">
-            {this.state.dage.filter(dag => Number(dag.uge) === this.state.uge).map((dag, i) => {
-              return (
-                <div key={i} className={`${dag.kok ? "day-list_item" : "day-list_item-ingen-madklub"}`}>
-                  <h2 >{dag.ugedag} {dag.dato}</h2>
-                  <span className="madklub" title="">{dag.kok || "Ingen madklub"}</span>
-                  {dag.kok && (
-                    <Tooltip
-                      className="tilmeldte"
-                      title={dag.tilmeldte && dag.tilmeldte}
-                      position="right"
-                      trigger="click"
-                    >
-                      <span>
-                        &nbsp;- tilmeldte: <span className="tilmeldte-clickable">{dag.tilmeldte && dag.antalTilmeldte}</span>
-                      </span>
-                    </Tooltip>
-                  )}
-                  {dag.kok && this.state.værelsesnr && this.renderTilmeld(dag)}
-                </div>
-              );
-            })}
+            {this.state.dage.filter(dag => Number(dag.uge) === this.state.uge).map((dag, i) =>
+              <DagComponent key={i}
+                dag={dag}
+                værelsesnr={this.state.værelsesnr}
+                uge={this.state.uge}
+                authenticated={this.state.authenticated}
+                onLoad={this.onLoad}
+              />
+            )}
           </div>
         </div >
       );
@@ -170,24 +157,6 @@ class App extends Component {
     }
   }
 
-
-  renderTilmeld(dag) {
-    if (this.checkTilmelding(this.state.værelsesnr, dag)) {
-      return (<button className="btn" onClick={() => this.tilmeld(this.state.værelsesnr, "", dag.dato, dag.row)}>Afmeld</button>)
-    }
-    else
-      return (dag.kok && <TilmeldModal onTilmeld={(value, participants) => this.tilmeld(value, participants, dag.dato, dag.row)} roomNr={this.state.værelsesnr} />)
-  }
-
-  checkTilmelding(nr, dag) {
-    var isTrue = false;
-    dag.tilmeldte.forEach(værelse => {
-      if (Number(værelse) === Number(nr)) isTrue = true;
-      if (værelse.toString().includes(" ")) if (værelse.toString().split(" ")[0] === nr.toString()) isTrue = true;
-    });
-    return isTrue;
-  }
-
   OnNextWeekPressed() {
     this.setState({ uge: this.state.uge + 1 }, () => {
       this.updateData();
@@ -203,17 +172,6 @@ class App extends Component {
   updateData() {
     if (this.state.authenticated) loadMonth(this.onLoad, this.state.uge, new Date().getFullYear());
     else checkAuth(true, (result) => { this.handleAuth(result); loadMonth(this.onLoad, this.state.uge, new Date().getFullYear()); });
-  }
-
-  tilmeld(roomNr, participants, dato, row) {
-    var date = new Date(new Date().getFullYear(), 0, (1 + (this.state.uge - 1) * 7));
-    date.setDate(dato.split('.')[0]);
-    console.log(date);
-    if (this.state.authenticated) tilmeld(roomNr, this.state.uge, date, row, participants, () => setClient(loadMonth(this.onLoad, this.state.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
-    else checkAuth(false, (result) => {
-      this.handleAuth(result);
-      tilmeld(roomNr, this.state.uge, date, participants, () => setClient(loadMonth(this.onLoad, this.state.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
-    });
   }
 }
 

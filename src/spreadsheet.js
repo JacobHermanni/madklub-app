@@ -48,7 +48,7 @@ function loadUsers(users) {
 
 function tryLoadUser(loggedInUser, sheetUsers, callback) {
   const user = sheetUsers.find((user) => user.email === loggedInUser.email);
-  if (user) callback(user, true); 
+  if (user) callback(user, true);
   else callback(loggedInUser, false);
 }
 
@@ -123,7 +123,11 @@ export function loadMonth(callback, weekNr, year) {
           ugedag = day[3],
           kok = day[4],
           antalTilmeldte = day[8],
-          tilmeldte = []
+          tilmeldte = [],
+          beskrivelse = day[5],
+          lukker = day[6],
+          kuvertpris = day[9],
+          veggie = day[10]
 
         for (let index = 11; index < day.length; index++) {
           if (day[index] !== "") {
@@ -138,7 +142,7 @@ export function loadMonth(callback, weekNr, year) {
           }
         }
 
-        if (!tilmeldte.find(nr => Number(nr) === Number(day[4]))) tilmeldte.push(day[4]);
+        if (!tilmeldte.find(nr => nr.toString().includes(day[4].toString()))) tilmeldte.push(day[4]);
 
         return {
           row,
@@ -148,7 +152,11 @@ export function loadMonth(callback, weekNr, year) {
           ugedag,
           kok,
           antalTilmeldte,
-          tilmeldte
+          tilmeldte,
+          beskrivelse,
+          lukker,
+          kuvertpris,
+          veggie
         }
       });
 
