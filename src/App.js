@@ -47,8 +47,6 @@ class App extends Component {
       this.setState({
         authenticated: true
       }, () => console.log("authenticated.."));
-
-      //console.log(authResult);
       initUsersConfig(authResult, this.LoadUser.bind(this));
       // following load might have to happen only after udate to sheet
       loadMonth(this.onLoad, this.state.uge, new Date().getFullYear());

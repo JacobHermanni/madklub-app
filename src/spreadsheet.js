@@ -159,7 +159,6 @@ export function loadMonth(callback, weekNr, year) {
           veggie
         }
       });
-      console.log(callback);
       callback(
         days
       );
