@@ -95,10 +95,10 @@ export default class DagComponent extends React.Component {
     tilmeld(roomNr, participants, dato, row) {
         var date = new Date(new Date().getFullYear(), 0, (1 + (this.props.uge - 1) * 7));
         date.setDate(dato.split('.')[0]);
-        if (this.props.authenticated) tilmeld(roomNr, this.props.uge, date, row, participants, () => setClient(loadMonth(this.onLoad, this.props.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
+        if (this.props.authenticated) tilmeld(roomNr, this.props.uge, date, row, participants, () => setClient(loadMonth(this.props.onLoad, this.props.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
         else checkAuth(false, (result) => {
             this.handleAuth(result);
-            tilmeld(roomNr, this.props.uge, date, participants, () => setClient(loadMonth(this.onLoad, this.props.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
+            tilmeld(roomNr, this.props.uge, date, participants, () => setClient(loadMonth(this.props.onLoad, this.props.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
         });
     }
 }

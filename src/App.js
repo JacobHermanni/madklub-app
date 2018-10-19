@@ -27,6 +27,7 @@ class App extends Component {
     }
     this.OnNextWeekPressed = this.OnNextWeekPressed.bind(this);
     this.onPreviousWeekPressed = this.onPreviousWeekPressed.bind(this);
+    this.handleAuth = this.handleAuth.bind(this);
     this.updateData = this.updateData.bind(this);
     this.onLoad = this.onLoad.bind(this);
   }
@@ -46,8 +47,6 @@ class App extends Component {
       this.setState({
         authenticated: true
       }, () => console.log("authenticated.."));
-
-      //console.log(authResult);
       initUsersConfig(authResult, this.LoadUser.bind(this));
       // following load might have to happen only after udate to sheet
       loadMonth(this.onLoad, this.state.uge, new Date().getFullYear());
@@ -170,8 +169,14 @@ class App extends Component {
   }
 
   updateData() {
-    if (this.state.authenticated) loadMonth(this.onLoad, this.state.uge, new Date().getFullYear());
-    else checkAuth(true, (result) => { this.handleAuth(result); loadMonth(this.onLoad, this.state.uge, new Date().getFullYear()); });
+    if (this.state.authenticated) {
+      loadMonth(this.onLoad, this.state.uge, new Date().getFullYear());
+    } else {
+      checkAuth(true, (result) => { 
+        this.handleAuth(result); 
+        loadMonth(this.onLoad, this.state.uge, new Date().getFullYear()); 
+      });
+    }
   }
 }
 
