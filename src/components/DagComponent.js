@@ -99,22 +99,17 @@ export default class DagComponent extends React.Component {
         date.setDate(dato.split('.')[0]);
         this.setState({ loading: true });
 
-        const onload = this.props.onLoad.bind(this);
-
-        function callback(callbackobj) {
-            onload(callbackobj);
-            this.setState({ loading: false });
-        }
-        const localCallback = callback.bind(this);
+        // onLoad will get called from the loadMonth function with the additional response data below
+        const onLoad = (response) => this.setState({ loading: false }, this.props.onLoad(response));
 
         if (this.props.authenticated) {
             tilmeld(roomNr, this.props.uge, date, row, participants,
-                setClient(loadMonth(localCallback, this.props.uge, new Date().getFullYear())),
+                setClient(loadMonth(onLoad, this.props.uge, new Date().getFullYear())),
                 error => console.log("Error tilmelding", error));
         } else checkAuth(false, (result) => {
             this.handleAuth(result);
             tilmeld(roomNr, this.props.uge, date, participants,
-                setClient(loadMonth(localCallback, this.props.uge, new Date().getFullYear())),
+                setClient(loadMonth(onLoad, this.props.uge, new Date().getFullYear())),
                 error => console.log("Error tilmelding", error));
         });
     }
