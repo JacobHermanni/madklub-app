@@ -10,7 +10,8 @@ export default class DagComponent extends React.Component {
         const expandable = this.props.dag.beskrivelse || this.props.dag.lukker ? true : false;
         this.state = {
             expanded: false,
-            expandable: expandable
+            expandable: expandable,
+            loading: false
         };
     }
 
@@ -76,7 +77,8 @@ export default class DagComponent extends React.Component {
     }
 
     renderTilmeld(dag) {
-        if (this.checkTilmelding(this.props.værelsesnr, dag)) {
+        if (this.state.loading) return <div>loading</div>
+        else if (this.checkTilmelding(this.props.værelsesnr, dag)) {
             return (<button className="btn" onClick={() => this.tilmeld(this.props.værelsesnr, "", dag.dato, dag.row)}>Afmeld</button>)
         }
         else
@@ -95,10 +97,25 @@ export default class DagComponent extends React.Component {
     tilmeld(roomNr, participants, dato, row) {
         var date = new Date(new Date().getFullYear(), 0, (1 + (this.props.uge - 1) * 7));
         date.setDate(dato.split('.')[0]);
-        if (this.props.authenticated) tilmeld(roomNr, this.props.uge, date, row, participants, () => setClient(loadMonth(this.props.onLoad, this.props.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
-        else checkAuth(false, (result) => {
+        this.setState({ loading: true });
+
+        const onload = this.props.onLoad.bind(this);
+
+        function callback(callbackobj) {
+            onload(callbackobj);
+            this.setState({ loading: false });
+        }
+        const localCallback = callback.bind(this);
+
+        if (this.props.authenticated) {
+            tilmeld(roomNr, this.props.uge, date, row, participants,
+                setClient(loadMonth(localCallback, this.props.uge, new Date().getFullYear())),
+                error => console.log("Error tilmelding", error));
+        } else checkAuth(false, (result) => {
             this.handleAuth(result);
-            tilmeld(roomNr, this.props.uge, date, participants, () => setClient(loadMonth(this.props.onLoad, this.props.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
+            tilmeld(roomNr, this.props.uge, date, participants,
+                setClient(loadMonth(localCallback, this.props.uge, new Date().getFullYear())),
+                error => console.log("Error tilmelding", error));
         });
     }
 }
