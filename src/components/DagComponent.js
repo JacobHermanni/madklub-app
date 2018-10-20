@@ -2,6 +2,7 @@ import React from 'react';
 import { Tooltip } from 'react-tippy';
 import TilmeldModal from './TilmeldModal';
 import { checkAuth, loadMonth, setClient, tilmeld } from '../spreadsheet';
+import Loader from 'react-spinners/ScaleLoader';
 
 
 export default class DagComponent extends React.Component {
@@ -38,6 +39,7 @@ export default class DagComponent extends React.Component {
                         </span>
                     </Tooltip>
                 )}
+                <br />
                 {this.props.dag.kok && this.props.værelsesnr && this.renderTilmeld(this.props.dag)}
                 {this.state.expanded && this.renderExpanded()}
                 {this.props.dag.kok && this.state.expandable &&
@@ -77,7 +79,7 @@ export default class DagComponent extends React.Component {
     }
 
     renderTilmeld(dag) {
-        if (this.state.loading) return <div>loading</div>
+        if (this.state.loading) return <Loader height={41} color="#4285f4"/>
         else if (this.checkTilmelding(this.props.værelsesnr, dag)) {
             return (<button className="btn" onClick={() => this.tilmeld(this.props.værelsesnr, "", dag.dato, dag.row)}>Afmeld</button>)
         }
@@ -100,7 +102,7 @@ export default class DagComponent extends React.Component {
         this.setState({ loading: true });
 
         // onLoad will get called from the loadMonth function with the additional response data below
-        const onLoad = (response) => this.setState({ loading: false }, this.props.onLoad(response));
+        const onLoad = (response) => this.setState({ loading: false, expanded: this.state.expanded }, this.props.onLoad(response));
 
         if (this.props.authenticated) {
             tilmeld(roomNr, this.props.uge, date, row, participants,
