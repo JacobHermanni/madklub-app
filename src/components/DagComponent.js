@@ -2,6 +2,7 @@ import React from 'react';
 import { Tooltip } from 'react-tippy';
 import TilmeldModal from './TilmeldModal';
 import { checkAuth, loadMonth, setClient, tilmeld } from '../spreadsheet';
+import Loader from 'react-spinners/ScaleLoader';
 
 
 export default class DagComponent extends React.Component {
@@ -10,7 +11,8 @@ export default class DagComponent extends React.Component {
         const expandable = this.props.dag.beskrivelse || this.props.dag.lukker ? true : false;
         this.state = {
             expanded: false,
-            expandable: expandable
+            expandable: expandable,
+            loading: false
         };
     }
 
@@ -37,6 +39,7 @@ export default class DagComponent extends React.Component {
                         </span>
                     </Tooltip>
                 )}
+                <br />
                 {this.props.dag.kok && this.props.værelsesnr && this.renderTilmeld(this.props.dag)}
                 {this.state.expanded && this.renderExpanded()}
                 {this.props.dag.kok && this.state.expandable &&
@@ -76,7 +79,8 @@ export default class DagComponent extends React.Component {
     }
 
     renderTilmeld(dag) {
-        if (this.checkTilmelding(this.props.værelsesnr, dag)) {
+        if (this.state.loading) return <Loader height={41} color="#4285f4"/>
+        else if (this.checkTilmelding(this.props.værelsesnr, dag)) {
             return (<button className="btn" onClick={() => this.tilmeld(this.props.værelsesnr, "", dag.dato, dag.row)}>Afmeld</button>)
         }
         else
@@ -95,10 +99,20 @@ export default class DagComponent extends React.Component {
     tilmeld(roomNr, participants, dato, row) {
         var date = new Date(new Date().getFullYear(), 0, (1 + (this.props.uge - 1) * 7));
         date.setDate(dato.split('.')[0]);
-        if (this.props.authenticated) tilmeld(roomNr, this.props.uge, date, row, participants, () => setClient(loadMonth(this.props.onLoad, this.props.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
-        else checkAuth(false, (result) => {
+        this.setState({ loading: true });
+
+        // onLoad will get called from the loadMonth function with the additional response data below
+        const onLoad = (response) => this.setState({ loading: false, expanded: this.state.expanded }, this.props.onLoad(response));
+
+        if (this.props.authenticated) {
+            tilmeld(roomNr, this.props.uge, date, row, participants,
+                setClient(loadMonth(onLoad, this.props.uge, new Date().getFullYear())),
+                error => console.log("Error tilmelding", error));
+        } else checkAuth(false, (result) => {
             this.handleAuth(result);
-            tilmeld(roomNr, this.props.uge, date, participants, () => setClient(loadMonth(this.props.onLoad, this.props.uge, new Date().getFullYear())), error => console.log("Error tilmelding", error));
+            tilmeld(roomNr, this.props.uge, date, participants,
+                setClient(loadMonth(onLoad, this.props.uge, new Date().getFullYear())),
+                error => console.log("Error tilmelding", error));
         });
     }
 }

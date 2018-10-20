@@ -11,6 +11,7 @@
     "react-dom": "^16.5.2",
     "react-dropdown": "^1.6.2",
     "react-scripts": "1.1.5",
+    "react-spinners": "^0.4.7",
     "react-tippy": "^1.2.2"
   },
   "scripts": {

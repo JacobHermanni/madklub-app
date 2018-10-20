@@ -172,9 +172,9 @@ class App extends Component {
     if (this.state.authenticated) {
       loadMonth(this.onLoad, this.state.uge, new Date().getFullYear());
     } else {
-      checkAuth(true, (result) => { 
-        this.handleAuth(result); 
-        loadMonth(this.onLoad, this.state.uge, new Date().getFullYear()); 
+      checkAuth(true, (result) => {
+        this.handleAuth(result);
+        loadMonth(this.onLoad, this.state.uge, new Date().getFullYear());
       });
     }
   }
