@@ -33,10 +33,12 @@ class App extends Component {
   }
 
   componentDidMount() {
-    initConfig(window.gapi.load('client', () => {
-      setClient(loadMonth(this.onLoad, this.state.uge, new Date().getFullYear()));
-      checkAuth(true, this.handleAuth.bind(this));
-    }));
+    initConfig(() => {
+      window.gapi.load('client', () => {
+        setClient(loadMonth(this.onLoad, this.state.uge, new Date().getFullYear()));
+        checkAuth(true, this.handleAuth.bind(this));
+      })
+    });
   }
 
   /**
