@@ -41,7 +41,13 @@ export default class DagComponent extends React.Component {
                 )}
                 <br />
                 {this.props.dag.kok && this.props.værelsesnr && this.renderTilmeld(this.props.dag)}
+                {this.props.dag.kok &&
+                    (<div>
+                        <span>Veggie: {this.props.dag.veggie}</span>
+                    </div>)
+                }
                 {this.state.expanded && this.renderExpanded()}
+
                 {this.props.dag.kok && this.state.expandable &&
                     (<div className="clickable dagcomponent-toggle-expand" onClick={() => this.toggleExpand()}>
                         {!this.state.expanded ? "\u225A" : "\u2259"}
@@ -67,9 +73,6 @@ export default class DagComponent extends React.Component {
                     <div>
                         <span>Kuvertpris: {this.props.dag.kuvertpris} kr.</span>
                     </div>)}
-                <div>
-                    <span>Veggie: {this.props.dag.veggie}</span>
-                </div>
             </div>)
     }
 
@@ -79,7 +82,7 @@ export default class DagComponent extends React.Component {
     }
 
     renderTilmeld(dag) {
-        if (this.state.loading) return <Loader height={41} color="#4285f4"/>
+        if (this.state.loading) return <Loader height={41} color="#4285f4" />
         else if (this.checkTilmelding(this.props.værelsesnr, dag)) {
             return (<button className="btn" onClick={() => this.tilmeld(this.props.værelsesnr, "", dag.dato, dag.row)}>Afmeld</button>)
         }
