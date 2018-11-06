@@ -23,7 +23,8 @@ class App extends Component {
       authenticated: false,
       uge: currentWeekNumber(),
       værelsesnr: undefined,
-      navn: undefined
+      navn: undefined,
+      showRegister: false
     }
     this.OnNextWeekPressed = this.OnNextWeekPressed.bind(this);
     this.onPreviousWeekPressed = this.onPreviousWeekPressed.bind(this);
@@ -102,6 +103,7 @@ class App extends Component {
             (<RegistrerModal
               user={{ værelsesnr: this.state.værelsesnr, navn: this.state.navn, email: this.state.email }}
               onGem={(værelsesnr, navn) => this.setState({ showRegister: false, værelsesnr, navn })}
+              showModal={true}
             />
             )}
 

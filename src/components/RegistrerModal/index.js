@@ -16,7 +16,8 @@ export default class RegistrerModal extends React.Component {
         super(props);
         this.state = {
             værelsesnr: this.props.user.værelsesnr,
-            navn: this.props.user.navn || ""
+            navn: this.props.user.navn || "",
+            showModal: this.props.showModal || false
         };
 
         this.handleOpenModal = this.handleOpenModal.bind(this);
