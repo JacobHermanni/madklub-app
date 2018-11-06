@@ -8,7 +8,7 @@ import Loader from 'react-spinners/ScaleLoader';
 export default class DagComponent extends React.Component {
     constructor(props) {
         super(props);
-        const expandable = this.props.dag.beskrivelse || this.props.dag.lukker ? true : false;
+        const expandable = this.props.dag.beskrivelse || this.props.dag.lukker || this.props.dag.kuvertpris !== "0,0" ? true : false;
         this.state = {
             expanded: false,
             expandable: expandable,
@@ -18,7 +18,8 @@ export default class DagComponent extends React.Component {
 
     componentDidUpdate(prevprops) {
         if (prevprops !== this.props) {
-            this.setState({ expanded: false });
+            const expandable = this.props.dag.beskrivelse || this.props.dag.lukker || this.props.dag.kuvertpris !== "0,0" ? true : false;
+            this.setState({ expanded: false, expandable });
         }
     }
 
