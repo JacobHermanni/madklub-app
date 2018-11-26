@@ -63,9 +63,15 @@ class App extends Component {
 
   onLoad(data, error) {
     if (data) {
-      this.setState({
-        dage: data
-      });
+      // Getting previous month if the current week nr does'nt exist in data.
+      if (data.filter(x => Number(x.uge) === Number(this.state.uge)).length === 0) {
+        loadMonth(this.onLoad, this.state.uge - 1, new Date().getFullYear());
+      }
+      else {
+        this.setState({
+          dage: data
+        });
+      }
     }
     else if (error) {
       console.error(error);
