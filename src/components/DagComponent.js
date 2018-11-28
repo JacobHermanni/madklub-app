@@ -108,14 +108,17 @@ export default class DagComponent extends React.Component {
         // onLoad will get called from the loadMonth function with the additional response data below
         const onLoad = (response) => this.setState({ loading: false, expanded: this.state.expanded }, this.props.onLoad(response));
 
+        var week = this.props.uge;
+        if (this.props.overrideMonth) { week = week - 1; }
+
         if (this.props.authenticated) {
-            tilmeld(roomNr, this.props.uge, date, row, participants,
-                setClient(loadMonth(onLoad, this.props.uge, new Date().getFullYear())),
+            tilmeld(roomNr, week, date, row, participants,
+                setClient(loadMonth(onLoad, week, new Date().getFullYear())),
                 error => console.log("Error tilmelding", error));
         } else checkAuth(false, (result) => {
             this.handleAuth(result);
-            tilmeld(roomNr, this.props.uge, date, participants,
-                setClient(loadMonth(onLoad, this.props.uge, new Date().getFullYear())),
+            tilmeld(roomNr, week, date, participants,
+                setClient(loadMonth(onLoad, week, new Date().getFullYear())),
                 error => console.log("Error tilmelding", error));
         });
     }

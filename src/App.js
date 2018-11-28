@@ -24,7 +24,8 @@ class App extends Component {
       uge: currentWeekNumber(),
       værelsesnr: undefined,
       navn: undefined,
-      showRegister: false
+      showRegister: false,
+      overrideMonth: false
     }
     this.OnNextWeekPressed = this.OnNextWeekPressed.bind(this);
     this.onPreviousWeekPressed = this.onPreviousWeekPressed.bind(this);
@@ -66,6 +67,7 @@ class App extends Component {
       // Getting previous month if the current week nr does'nt exist in data.
       if (data.filter(x => Number(x.uge) === Number(this.state.uge)).length === 0) {
         loadMonth(this.onLoad, this.state.uge - 1, new Date().getFullYear());
+        this.setState({ overrideMonth: true });
       }
       else {
         this.setState({
@@ -146,6 +148,7 @@ class App extends Component {
                 uge={this.state.uge}
                 authenticated={this.state.authenticated}
                 onLoad={this.onLoad}
+                overrideMonth
               />
             )}
           </div>
