@@ -64,7 +64,7 @@ class App extends Component {
 
   onLoad(data, error) {
     if (data) {
-      // Getting previous month if the current week nr does'nt exist in data.
+      // Getting previous month if the current week nr doesn't exist in data.
       if (data.filter(x => Number(x.uge) === Number(this.state.uge)).length === 0) {
         loadMonth(this.onLoad, this.state.uge - 1, new Date().getFullYear());
         this.setState({ overrideMonth: true });
@@ -148,7 +148,7 @@ class App extends Component {
                 uge={this.state.uge}
                 authenticated={this.state.authenticated}
                 onLoad={this.onLoad}
-                overrideMonth
+                overrideMonth={this.state.overrideMonth}
               />
             )}
           </div>
@@ -170,15 +170,29 @@ class App extends Component {
   }
 
   OnNextWeekPressed() {
-    this.setState({ uge: this.state.uge + 1 }, () => {
-      this.updateData();
-    });
+    if (this.state.uge === 52) {
+      this.setState({ uge: 1 }, () => {
+        this.updateData();
+      });
+    }
+    else {
+      this.setState({ uge: this.state.uge + 1 }, () => {
+        this.updateData();
+      });
+    }
   }
 
   onPreviousWeekPressed() {
-    this.setState({ uge: this.state.uge - 1 }, () => {
-      this.updateData();
-    })
+    if (this.state.uge === 1) {
+      this.setState({ uge: 52 }, () => {
+        this.updateData();
+      });
+    }
+    else {
+      this.setState({ uge: this.state.uge - 1 }, () => {
+        this.updateData();
+      });
+    }
   }
 
   updateData() {

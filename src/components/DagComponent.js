@@ -102,23 +102,32 @@ export default class DagComponent extends React.Component {
 
     tilmeld(roomNr, participants, dato, row) {
         var date = new Date(new Date().getFullYear(), 0, (1 + (this.props.uge - 1) * 7));
+
         date.setDate(dato.split('.')[0]);
+
+        // change year if looking into next year or into prev year
+        if (date.getMonth() === 0 && new Date().getMonth() === 11) {
+            date.setFullYear(date.getFullYear() + 1)
+        } else if (date.getMonth() === 11 && new Date().getMonth() === 0) {
+            date.setFullYear(date.getFullYear() - 1)
+        }
+
         this.setState({ loading: true });
 
         // onLoad will get called from the loadMonth function with the additional response data below
         const onLoad = (response) => this.setState({ loading: false, expanded: this.state.expanded }, this.props.onLoad(response));
 
         var week = this.props.uge;
-        if (this.props.overrideMonth) { week = week - 1; }
+        if (this.props.overrideMonth) { week = week + 1; }
 
         if (this.props.authenticated) {
             tilmeld(roomNr, week, date, row, participants,
-                setClient(loadMonth(onLoad, week, new Date().getFullYear())),
+                setClient(loadMonth(onLoad, week, date.getFullYear())),
                 error => console.log("Error tilmelding", error));
         } else checkAuth(false, (result) => {
             this.handleAuth(result);
             tilmeld(roomNr, week, date, participants,
-                setClient(loadMonth(onLoad, week, new Date().getFullYear())),
+                setClient(loadMonth(onLoad, week, date.getFullYear())),
                 error => console.log("Error tilmelding", error));
         });
     }
