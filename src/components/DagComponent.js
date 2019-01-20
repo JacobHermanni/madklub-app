@@ -12,7 +12,8 @@ export default class DagComponent extends React.Component {
         this.state = {
             expanded: false,
             expandable: expandable,
-            loading: false
+            loading: false,
+            alleBrugere: this.props.alleBrugere
         };
     }
 
@@ -24,6 +25,12 @@ export default class DagComponent extends React.Component {
     }
 
     render() {
+        var title = [];
+        if (this.props.alleBrugere && Number(this.props.dag.antalTilmeldte) > 0) {
+            title = this.props.alleBrugere.getUserNames(this.props.dag.tilmeldte);
+        } else {
+            title = this.props.dag.tilmeldte && this.props.dag.tilmeldte;
+        }
         return (
             <div className={`${this.props.dag.kok ? "day-list_item" : "day-list_item-ingen-madklub"}`}>
                 <h2 >{this.props.dag.ugedag} {this.props.dag.dato}</h2>
@@ -31,7 +38,7 @@ export default class DagComponent extends React.Component {
                 {this.props.dag.kok && (
                     <Tooltip
                         className="tilmeldte"
-                        title={this.props.dag.tilmeldte && this.props.dag.tilmeldte}
+                        title={title}
                         position="right"
                         trigger="click"
                     >
