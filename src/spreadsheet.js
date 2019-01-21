@@ -1,4 +1,5 @@
 import { config, API } from './APIConfig';
+import AllUsers from './users';
 import { getFieldInfoForRoom, getMonthNameFromWeekNr } from "./GoogleSheet/converter";
 const userSheet = { sheetId: '1XFbQJkN2faEI-ziWowvNs93OhOuP0SwBmClNcIZ3K9g', sheet: "brugerkonfiguration" };
 const liveSheet = { sheetId: '1LRPYmJEkluEhmA6Z3eGVuCxri-_jw6amV4pqumSI9rg', sheet: "september!" };
@@ -27,7 +28,7 @@ export function setClient(callback) {
 
 
 /** 
- * Loads all users
+ * Loads logged in user and all users
  */
 export function initUsersConfig(token, callback) {
   var userInfo = decodeJWT(token);
@@ -39,16 +40,19 @@ export function initUsersConfig(token, callback) {
 
   var loggedInUser = { værelse: undefined, email: email, navn: name };
 
-  loadUsersSheet((response) => { tryLoadUser(loggedInUser, response, callback); loadUsers(response) });
+  loadUsersSheet((response) => { tryLoadUser(loggedInUser, response, callback); });
 }
 
-function loadUsers(users) {
-  // implement loading all users to somewhere that can provide alternative id from room nr to names
+/** 
+ * Loads all users
+ */
+export function initAllUsersConfig(callback) {
+  loadUsersSheet((response) => { callback(new AllUsers(response)) });
 }
 
 function tryLoadUser(loggedInUser, sheetUsers, callback) {
   const user = sheetUsers.find((user) => user.email === loggedInUser.email);
-  if (user) callback(user, true);
+  if (user) callback(user, true, new AllUsers(sheetUsers));
   else callback(loggedInUser, false);
 }
 
@@ -82,7 +86,7 @@ export function loadUsersSheet(callback) {
       const data = response.result.values || []
 
       let users = data.map((user, i) => {
-        let row =  i, // Save row ID for later update
+        let row = i, // Save row ID for later update
           værelsesnr = user[0],
           navn = user[1],
           email = user[2]

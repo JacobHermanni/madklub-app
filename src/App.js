@@ -3,7 +3,7 @@ import currentWeekNumber from 'current-week-number';
 import { initConfig } from './APIConfig';
 import 'react-dropdown/style.css'
 import DagComponent from './components/DagComponent';
-import { checkAuth, loadMonth, initUsersConfig, setClient } from './spreadsheet';
+import { checkAuth, loadMonth, initUsersConfig, initAllUsersConfig, setClient } from './spreadsheet';
 import 'react-tippy/dist/tippy.css';
 import Dropdown from 'react-dropdown'
 import RegistrerModal from './components/RegistrerModal';
@@ -25,7 +25,8 @@ class App extends Component {
       værelsesnr: undefined,
       navn: undefined,
       showRegister: false,
-      overrideMonth: false
+      overrideMonth: false,
+      alleBrugere: undefined
     }
     this.OnNextWeekPressed = this.OnNextWeekPressed.bind(this);
     this.onPreviousWeekPressed = this.onPreviousWeekPressed.bind(this);
@@ -56,6 +57,7 @@ class App extends Component {
       loadMonth(this.onLoad, this.state.uge, new Date().getFullYear());
     } else {
       console.log("auth failed?", authResult.error);
+      initAllUsersConfig(this.LoadUsers.bind(this));
       this.setState({
         authenticated: false
       })
@@ -83,9 +85,13 @@ class App extends Component {
     }
   }
 
-  LoadUser(user, isRegistered) {
+  LoadUsers(users) {
+    this.setState({ alleBrugere: users });
+  }
+
+  LoadUser(user, isRegistered, users) {
     if (isRegistered) {
-      this.setState({ værelsesnr: user.værelsesnr, navn: user.navn });
+      this.setState({ værelsesnr: user.værelsesnr, navn: user.navn, alleBrugere: users });
     }
     else {
       this.setState({ showRegister: true, værelsesnr: user.værelsesnr, navn: user.navn, email: user.email });
@@ -149,6 +155,7 @@ class App extends Component {
                 authenticated={this.state.authenticated}
                 onLoad={this.onLoad}
                 overrideMonth={this.state.overrideMonth}
+                alleBrugere={this.state.alleBrugere}
               />
             )}
           </div>
