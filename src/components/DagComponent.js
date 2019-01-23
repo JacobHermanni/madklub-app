@@ -34,7 +34,7 @@ export default class DagComponent extends React.Component {
         return (
             <div className={`${this.props.dag.kok ? "day-list_item" : "day-list_item-ingen-madklub"}`}>
                 <h2 >{this.props.dag.ugedag} {this.props.dag.dato}</h2>
-                <span className={this.props.værelsesnr == this.props.dag.kok ? "madklub mit-værelsesnr" : "madklub"}>
+                <span className={this.props.værelsesnr === this.props.dag.kok ? "madklub mit-værelsesnr" : "madklub"}>
                     {this.props.dag.kok || "Ingen madklub"}</span>
                 {this.props.dag.kok && (
                     <Tooltip

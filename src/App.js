@@ -158,7 +158,6 @@ class App extends Component {
                 onLoad={this.onLoad}
                 overrideMonth={this.state.overrideMonth}
                 alleBrugere={this.state.alleBrugere}
-                værelsesnr={this.state.værelsesnr}
               />
             )}
           </div>
