@@ -40,9 +40,28 @@ body > svg {
   width: 100%;
 }
 
+.room-dropdown-control {
+  color: orange !important;
+  background-color: #020e1b !important;
+}
+
+.room-dropdown-menu {
+  background-color: #020e1b !important;
+}
+
+.room-dropdown-menu > .Dropdown-option {
+  color: white !important;
+}
+
+.room-dropdown-menu > .is-selected {
+  background-color: #4285f438 !important;
+  color: orange !important;
+}
+
 .room-number {
   width: 170px;
-  padding-bottom: 8pt;    color: white;
+  padding-bottom: 8pt; 
+  color: white;
   font-size: 1em;
   text-shadow: 0 2px 4px rgba(164, 164, 189, 0.4);
   display: inline-block;

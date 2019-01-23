@@ -103,7 +103,9 @@ class App extends Component {
       <div className="app">
         <h1 className="brand">Madklub Quick</h1>
         <div className="room-number">
-          <Dropdown className="room-dropdown"
+          <Dropdown
+            controlClassName="room-dropdown-control"
+            menuClassName='room-dropdown-menu'
             options={options}
             value={this.state.værelsesnr || "Vælg dit nr"}
             onChange={(option) => this.setState({ værelsesnr: option.value })}
