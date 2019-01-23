@@ -53,6 +53,10 @@ body > svg {
   background-color: #020e1b !important;
 }
 
+.room-dropdown-menu > .Dropdown-option:hover {
+  background-color: #4285f438 !important;
+}
+
 .room-dropdown-menu > .Dropdown-option {
   color: white !important;
 }
