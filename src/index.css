@@ -10,12 +10,14 @@
   margin: 0;
   padding: 15px;
 
+  height: 100vh;
+  
   background: linear-gradient(to bottom,rgb(9, 40, 65),#14324A);
 
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #004262;
   line-height: 1.4;
-
+  background-repeat:no-repeat;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
