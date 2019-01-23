@@ -141,7 +141,7 @@ class App extends Component {
               {this.state.dage.find(dag => Number(dag.uge) === Number(this.state.uge)) &&
                 (
                   <li>Ugens kokke:
-                <br></br> {this.state.dage.find(dag => Number(dag.uge) === Number(this.state.uge)).ugensKokke.toString()}
+                <br></br> {this.renderUgensKokke()}
                   </li>
                 )}
             </ul>
@@ -176,6 +176,35 @@ class App extends Component {
         <div className="loader" />
       );
     }
+  }
+
+  renderUgensKokke() {
+    var kokke = this.state.dage.find(dag => Number(dag.uge) === Number(this.state.uge)).ugensKokke;
+
+    var kokkeSpans = [];
+    var kokkeStrings = kokke.split(',');
+
+    if (this.state.værelsesnr) {
+      var twoDigitNr = this.state.værelsesnr.toString().substring(1);
+
+      kokkeStrings.forEach((kok, index) => {
+        if (kok === twoDigitNr) {
+          kokkeSpans.push(<span className="mit-værelsesnr" key={kok + " " + index}>{kok}</span>);
+        }
+        else {
+          kokkeSpans.push(<span key={kok + " " + index}>{kok}</span>);
+        }
+        if(kokkeStrings.length - 1 > index) {
+          kokkeSpans.push(<span key={kok + "comma " + index}>,</span>);
+        }
+      });
+    }
+    else {
+      kokkeStrings.forEach((kok, index) => {
+        kokkeSpans.push(<span key={kok + " " + index}>{kok}{kokkeStrings.length - 1 > index && ","}</span>);
+      });
+    }
+    return <span>{kokkeSpans}</span>;
   }
 
   OnNextWeekPressed() {

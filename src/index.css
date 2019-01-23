@@ -40,6 +40,10 @@ body > svg {
   width: 100%;
 }
 
+.mit-værelsesnr {
+  color: orange;
+}
+
 .room-dropdown-control {
   color: orange !important;
   background-color: #020e1b !important;
